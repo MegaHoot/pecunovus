@@ -1,0 +1,44 @@
+# ==========================
+# Pecunovus Mainnet Config
+# ==========================
+
+[node]
+# Human-readable node name
+identity = "mainnet-validator-01"
+
+# P2P networking bind address
+bind_addr = "0.0.0.0:7001"
+
+# RPC server address
+rpc_addr = "0.0.0.0:8081"
+
+# Known bootstrap peers (validators)
+peers = [
+  "bootstrap1.pecunovus.org:7001",
+  "bootstrap2.pecunovus.org:7001",
+  "bootstrap3.pecunovus.org:7001"
+]
+
+# Path to RocksDB storage
+db_path = "/var/lib/pecunovus/db"
+
+[consensus]
+# Stake weight for this validator
+stake = 1_000_000
+
+# Slot time in ms (faster than devnet)
+slot_duration_ms = 400
+
+# Tower BFT lockout multipliers
+lockout_base = 2
+max_lockout = 64
+
+# Enable Proof of History clock
+enable_poh = true
+
+[runtime]
+# Max transactions per block
+max_txs_per_block = 5000
+
+# Enable parallel execution
+parallel_execution = true

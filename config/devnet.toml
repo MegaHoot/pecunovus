@@ -1,0 +1,40 @@
+# ==========================
+# Pecunovus Devnet Config
+# ==========================
+
+[node]
+# Human-readable node name
+identity = "devnet-node-1"
+
+# P2P networking bind address
+bind_addr = "127.0.0.1:7001"
+
+# RPC server address
+rpc_addr = "127.0.0.1:8081"
+
+# Peers (comma-separated list of "host:port")
+peers = ["127.0.0.1:7002"]
+
+# Path to RocksDB storage
+db_path = "./data/devnet/node1"
+
+[consensus]
+# Proof of Stake stake weight
+stake = 1000
+
+# Slot time in ms
+slot_duration_ms = 400
+
+# Tower BFT lockout multipliers
+lockout_base = 2
+max_lockout = 32
+
+# Enable Proof of History clock
+enable_poh = true
+
+[runtime]
+# Max transactions per block
+max_txs_per_block = 500
+
+# Enable parallel execution
+parallel_execution = true
