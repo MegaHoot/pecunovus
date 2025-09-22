@@ -7,7 +7,7 @@ It supports **parallel runtime execution, RocksDB-backed state, validator voting
 
 ## 🚀 Features
 
-- **Hybrid Consensus (PoH + PoS)** with Tower BFT finality  
+- **Hybrid Consensus (PoT + PoS)** with Tower BFT finality  
 - **Validator voting + block proposal** integrated with networking  
 - **RocksDB-backed ledger & state storage** (migratable from in-memory)  
 - **Parallel runtime executor** with account locks & caching  
@@ -27,7 +27,7 @@ pecunovus/
 │   ├── api/          # External API definitions
 │   ├── node/         # Node bootstrap, CLI, services
 │   ├── network/      # P2P transport, gossip, peer management
-│   ├── consensus/    # PoH, PoS, Tower BFT, voting
+│   ├── consensus/    # PoT, PoS, Tower BFT, voting
 │   ├── ledger/       # Blockstore, snapshotting, pruning
 │   ├── runtime/      # Executor, VM, program loader
 │   ├── state/        # Accounts DB, locks, caching
