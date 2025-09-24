@@ -15,7 +15,7 @@ It supports **parallel runtime execution, RocksDB-backed state, validator voting
 - **Pluggable crypto module** (Ed25519, VRF support)  
 - **P2P networking layer** with gossip, peer discovery, and secure handshakes  
 - **JSON-RPC API** for clients and wallets  
-- **Devnet tooling**: run multiple nodes locally, submit transactions, and verify block inclusion  
+- **Devnet tooling**: run multiple nodes locally, submit transactions, and verify block inclusion.
 
 ---
 
