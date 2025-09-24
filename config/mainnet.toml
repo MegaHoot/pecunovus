@@ -41,290 +41,348 @@ parallel_execution = true
 # ==========================
 [[validators.validator]]
 name = "validator-01"
+stake = 100000
 pubkey = "T0oPDTb8aGMtzZXZBjE17etgT7DsNaRcmOjqNZtCPQam1rGvrtjOQvqCMR7eCbKO55H03p1XuewpVlT4UXWuCv1pBT32zo8fReinLlmNYvxNBiMp2UJPIAuJjM"
 address = "validator01.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-02"
+stake = 100000
 pubkey = "7a6NMXXpWIKjIfFU1e4XvYU48ZG7jLVWVfeOKoep8k1V1JUBJ1HW7i7IzeEZs82TIAIFj4rGSb806InZwyPiKej"
 address = "validator02.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-03"
+stake = 100000
 pubkey = "U7UhleCxOV4Rc7pZi1pJGbp1gS6gSaulRSLLaDCjiuCfjWIBslC5w6R2QWbhnP3F3KX6mntJxKLvUc25qGfZtU1dGTx2qDIShqurxbweUfFghFcbXn"
 address = "validator03.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-04"
+stake = 100000
 pubkey = "IpyWQxrRCiXpIv2koauyNVwd3Yfywg5vYjaWpzgU3YpnFODlMOchcruyNulHtmdyCX"
 address = "validator04.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-05"
+stake = 100000
 pubkey = "yPtmiabfu6VGOJqohX13VLs4ckabTTmDDpDC1xcyWeMAcNqh5U8YO8g2t7DTtzVlbPs"
 address = "validator05.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-06"
+stake = 100000
 pubkey = "e3HafnjWVUJxLTiIbk7JMmCgKhOTMk2B5RyRR6SLuD26KiSQ3mcRUCToGv6S4fLoqgh58hG5oMRjNzMypyhaOI8odfMiMY1fkSc6yFGK4H"
 address = "validator06.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-07"
+stake = 100000
 pubkey = "kAZIHubZUGNlEUMfz2hZ5sgRcOxdUHwcxNxHJVVcDaFooggLx5pZYI44dKJ1xKFwo7epS5jhStx7GORrAesOuTVumNqCXXIKfRBdGZunMtnLfFFfveB5uT"
 address = "validator07.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-08"
+stake = 100000
 pubkey = "Wk3fUZOuTvIjm18ritQF0RQ4GTWCk1ck3YCVeJF8WQ2djniPkPtsgIvZ6LzBgTHjGoTelyj57xd2yrq3z"
 address = "validator08.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-09"
+stake = 100000
 pubkey = "oQ7qAdoKQOpq0h8qJzV7CdXZ6O3Xwv58Sfco1Ucbal55qnGkPWCSqyJZgfMLsNY8rC7rLSKGLBlD7uYDmhzbxPDVy0IJ58iMK"
 address = "validator09.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-10"
+stake = 100000
 pubkey = "I4C74878uICuwWPbDURzhjQcAmUN7MFeoOQvRf64GRysfAnkQwna6xHay3eSKngLRwzXprpAwulo5wqLDC81JNNNHkIAFR13Vc4xYa06DaysHbyd0WA"
 address = "validator10.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-11"
+stake = 100000
 pubkey = "ZiYQJnkq7idTnYS4R1KvGzTbh8mO0jrI7Wx7KZfNEZYYZ8vgjowuuIkh7X6wnhjiLmPcX"
 address = "validator11.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-12"
+stake = 100000
 pubkey = "DDGrhEIr6Ox6yHTHUzAtr3Tm4kLNmLgrfxu23DcjKXoribcB6bNG6vimXQ8V2sDmQFrAY2zweu3sfqkxdnGRRE0k0pD"
 address = "validator12.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-13"
+stake = 100000
 pubkey = "tes5mAwausNHTRMTgHUs5RQ51GebsSygOkdVQt80sbq1PBA0jqL8LAuEYKwTCIRy3lSFckFwqpJ2mZi3tcbLhlM6IIpCktXacPhtvp1j6x"
 address = "validator13.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-14"
+stake = 100000
 pubkey = "TL0BPi4HGRCxlLUWputGG56cZiF0Qpw4OzAVUbKZPpB1YkKtvjjAXZaPDnMv2cj7XNtAAVn4mtAsawxCWn"
 address = "validator14.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-15"
+stake = 100000
 pubkey = "aOZx1vnN7DEDxQS3RqxWNnPgn1W3TtFJAZChh2iF2PmA0lMp0RWPn2nHEmlmVQKtKZRjlIm5RSc26akLVg6vIsrGzcLLQcoo84KyRrYwdtYZd4VmSLjOQp"
 address = "validator15.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-16"
+stake = 200000
 pubkey = "VQ3o6DdlcakgGHh01qXM5OIEUtKHeBcGaCzhWugWWpSjo6fx4BTYM3NbkvIQfiGOhdvxSgIYhQ4mgHGOnqE42W"
 address = "validator16.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-17"
+stake = 200000
 pubkey = "Z7DbHEyHbzTpn5XIFatSbQngUbZLIic41XTqNTVkkuRZ6JdBuBFuEy7BduTnn8knKSN1moEwC2tzbTgJTkFX2e4EPqm"
 address = "validator17.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-18"
+stake = 100000
 pubkey = "EmeeCy4YBp5vsYV3V0f5l4G3FbpnFDlBUh0sdg2w0wXNTGH7lYDNlgRvsjfxDkQNAJrcxi"
 address = "validator18.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-19"
+stake = 100000
 pubkey = "rpleBQShNEgmWGR6bdeJOAuzvbHxCjrpNVN0kItYZGiCNipc3nO2WUUpXRD1dDXkPvh"
 address = "validator19.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-20"
+stake = 100000
 pubkey = "ueDH8JUS6idelomCqy55OifapBVlna5OALVyofsHkjPCFpG0XcKPNTD8EYN7szx78WSNdw3mLDE8tCVP4zYB1rvlJPduKwokCqibrv3ArbLBOQ45"
 address = "validator20.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-21"
+stake = 175000
 pubkey = "U0tRRC7Mc4V8pvHovoOeztEwhfqe6Q8Drb1hOmxIZwOTLfdnO0U3VH1pkJtFwYkcCLTAD"
 address = "validator21.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-22"
+stake = 150000
 pubkey = "aoIPpdu6FE3x3qRULQquEwZdTgbuc6kNFZVUwd8zOJYbn5mFZHz2dLHePyYYUAvyqe4Zu4Sbkh6cnbhLQPueLKqO63l2e"
 address = "validator22.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-23"
+stake = 165000
 pubkey = "IG2PBC2vY8ywPOb6veITGwQjBt4hJAELKVemkrk1ZzjWWnHKlt8afv3phkOzeLAzoWNtDET3D4u6uZQvu"
 address = "validator23.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-24"
+stake = 200000
 pubkey = "2XWgykSJfPqN6RCoSLgIC7d11i0jXGpaykXVIwyyQ8fDHQDpmkNIMlACBQVQmWluG2fcGX8W"
 address = "validator24.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-25"
+stake = 185000
 pubkey = "JhrfRDGey7GSJEygXMpkbit3jrjmECKfHHjQ6OwMGYa0W8DV0BeDEmqtSz8YR7v2ITyeMHmr1ncLVTQcaTGsw62Bb"
 address = "validator25.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-26"
+stake = 145000
 pubkey = "6otsmhCGvVTE5xaN7Gz0vXK7FluIALGA7FWQiygcJuuizcbnG0TnYwhlPjuLzSLPQcg6eymnVXFpr7Dvfmf0OwKfAMN5HJJAYs8H"
 address = "validator26.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-27"
+stake = 105000
 pubkey = "eEycNJXR55abj2s6utdkTUwUFnPCxWV84ib1ZTZiSokgIEAunGeKEsuDFZ1dD1GmkVxwdUjoz3O6LFraFHP3MyvY"
 address = "validator27.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-28"
+stake = 115000
 pubkey = "xu3SUoV0lRfKU5FQkWlsynvbw3QtHqKhdEoQN0hH83iSCnQH2XzM5wQnFJCnQccsPZuoDIxr"
 address = "validator28.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-29"
+stake = 75000
 pubkey = "g4SkPRAlddtGNn2uso2Qv6QWSZhnVsYHSChE2bUZa7faAI1MPacQvQiM5iMlgQoyKVg2R7Wf1owqodyNz6rJ3Bif8Yvdqtz1YtRJrHHODtdMw"
 address = "validator29.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-30"
+stake = 102000
 pubkey = "mtbe28tFSsye8BjwJGLjizj8oY7UBaWBxylXNesbbAAcSW4zaVzVYwsAPf2ggrbZABfPGbjom172UZ1r2C30Fq31VcPdZxkSzg6nmwrOf4"
 address = "validator30.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-31"
+stake = 87000
 pubkey = "gd8Mvaeva8YyA5o87ewkZZPopsxr7CuxlwGwpDQncY2RtAM8jb4Qzg5BDXr27TD3n5zBBHFfk3aug4t6yfW3jTQQIukZ3gFvpyBql6"
 address = "validator31.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-32"
+stake = 60000
 pubkey = "QcPZjWqHUvbYKUe1YI1HEVMWIPVQipsyseOGS0sJNCHoZR5OBrLCmSKt52xHV4w0OjCpiuAjLN6mDkHxUdXgp1DjMdczg"
 address = "validator32.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-33"
+stake = 72000
 pubkey = "wPjOhlOM6vq4UJfeG2KpLfKjKzzFGxpKgRGpkpdpdGuG2mTFDTlBZ1Sx7Sre6NTSeeEdEcx188LUoVltFUUF6YgZidtLt6d6NoMCrPlwNjl"
 address = "validator33.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-34"
+stake = 63000
 pubkey = "NzQJ2gNW4xYr0yxchS7FoctxX4iOnOHl62Qjgb7KUdXVo2vP03cUW5V7gYfCi4QwBzN8LOKlA5my58sT14XKr6wwQiqIqsWtZ5VaablAzOVh3Xg8WwERblnKn"
 address = "validator34.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-35"
+stake = 59000
 pubkey = "6UlD826rs8ZTNydnTGiNkiK1rvQgqXK5eOLV2cvIzt4fweHTnKHTSXahNS6rjg8E03ZiQBYW0KpJgKN2mFepTp7Iafzp"
 address = "validator35.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-36"
+stake = 105000
 pubkey = "buqktoS7KszcM0EXQK547YdIIeZUIms1y1VQywb4MEVWf8LAoT6XswBtO078rICAzsuMcM1qtnrvquOGf3QN8RX25S0zaN7ULd7VRGufmVV3u4acegA5G7E33fUkgg"
 address = "validator36.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-37"
+stake = 125000
 pubkey = "2jvSoPe56ai15w7EJffRKnyPmXnem6bxzx1plKGLeKWD5wuOkSbDymPBfnaUKI0HlL6FiwzP6Lnjs2VTTjhdZNn"
 address = "validator37.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-38"
+stake = 115000
 pubkey = "4X8bvM56aTasb4JgdVl6lNNZ8oHSivK2fIUhNslqVMesS5FVCVkiXwVepj7viqTuucU6c2TlaKikhLVI8tqN2oQO1YL"
 address = "validator38.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-39"
+stake = 125000
 pubkey = "tg2pzTMkSKSY2ROsXkRLs0SxGEhpHdEojrOpwmjYZELKXppZlnvbXQbdSnbFaVbOJgE7k6VPSzCn8ErrNWVxAXkwRHk"
 address = "validator39.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-40"
+stake = 165000
 pubkey = "Ue6nkqBpZPnB2MWTpCkuRHcyCquG3iG1UL7V4cUUTizCkUeFbVhmLqiTKZJcxGlFbxJz5Z6FU1J30n3Am4PV8Z8tAs0nsVD6YNiabg73oQgNkTob5iKXoRffqLKOJXk"
 address = "validator40.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-41"
+stake = 135000
 pubkey = "W1oSTY2MRQFFLifqFdSlYWgmWH5LmsUnsQQMhwb0T7KbaQHhtK1USTk1UyFWE3ESLgRlXUBPt4QdojgaF6rrmnqJZ8roYElslqmBjoojcGPC6veTD1ffj0UUO"
 address = "validator41.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-42"
+stake = 167000
 pubkey = "45ObZDP7s7vFWWy5Y3U4ob7yBLCwWV7hbzJcvpiln4e1YUKu8ebheBLX8bWCPKRHSHU3AISdJFrFGbft7rxfuTZxdiq5xn4WH6LN2bBykuJC6tXLKRFBKKzpynuNmmW"
 address = "validator42.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-43"
+stake = 158000
 pubkey = "rZQi7BHCQpPPdKeTB77I6MIQpau06igod2zrhU5PGrf3Qoqx5Hy8ntn4Ll4VykpLVXyea86SjH3UpDxy5dCYzchigAsP"
 address = "validator43.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-44"
+stake = 174000
 pubkey = "Nwqw1KdAVvSbwWmY72pYFR3iddYBc1oHTrqAt0nA3Et3JWkhQDvrNvgs86ug7iLRCkrA8EjeCFTtss7tIKSaNyJu1rpJASuNl1oTBEU3PtPkIuNLkZ1BfOmL"
 address = "validator44.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-45"
+stake = 193000
 pubkey = "k2sXzFv0Ax3QiPRq8RwtdphdMmA1TJYmOMMZ6cCJAlXvWCfKCGlyo7fpQrpd1PBHGlxj4oqSGql0yNzyS1Yui1m3RyuOyveO1PgYy2JizE8"
 address = "validator45.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-46"
+stake = 201420
 pubkey = "GGOpFgyJAEJgVdOM0HooXwMUDaFm1H16MBgDN4slbZ2E5OLXiUZojWPTLx7aSdzxsjnj4PRqGOoDjUKoKL"
 address = "validator46.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-47"
+stake = 150000
 pubkey = "fDQ630Z08CZKHpz2AnqtYMDvmjwoPJXmJxsyrueKS1COY0g2cbmxpT2nnwuRlcJx01p7ZTVBpENuxteD6fsOF0k48rB8oepjKhHEz7h"
 address = "validator47.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-48"
+stake = 200000
 pubkey = "s17PSTAI4rrGRU48nfrkfHjTE51LL0GuMXPOoa234xnxsWuFtpk1nxz7FVG2PGob0xImO8oYaKB327oEnYgpk6keSTzAEIfaTCmBk0XsG"
 address = "validator48.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-49"
+stake = 175000
 pubkey = "OK4gBpA817RILfJmK3qLNdf2IL0xFMC7Y1NDxKr111zqIY3M2bYHQbIphceE4lG3q7"
 address = "validator49.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-50"
+stake = 205000
 pubkey = "DhRUlBvmvQSrwpYegHZRoTEQ0UQvvSWLnoBslEZe0dCa4Kzm5LLNSmrMc3taag4p6u8pSKJqEPB76LKWpHXyMF3PNtR5nFDCpfXv3ox2QMULwEYZvTsy0qSyW6"
 address = "validator50.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-51"
+stake = 195000
 pubkey = "SirnQtNM2VpDl7AUrFKzB2TPf20l8ixLOCNxWpRHZtKwsJBfqMEJcJgsGHvyQcHKoj5KdTrqTOq8NhXfhIKthJ5f8u6qJzw7mJx4Hhop2bAQY7kAyvqV2uwWE7q"
 address = "validator51.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-52"
+stake = 204000
 pubkey = "YwEy5gw7Dvvxwp3lVvN2hAsS4evYq0JLlNwhnYqGl5wakqiYPXyGtgpLcFAVilzCj1pofWS"
 address = "validator52.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-53"
+stake = 185000
 pubkey = "bsZGkTYCn1p1cB46GZ2VUC4hEQ8VIH3aUNozdOWPiqTXNHPKMuL5WHubEHeFhe8yrqZMLo"
 address = "validator53.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-54"
+stake = 190000
 pubkey = "latbubwINmmaRoTSVeQmXTHZSX1dn8wm7htWj2qHP3bI1p4m2p7b1Dyr6Z4vUxxVStbgqKjl1SHRxjzJ50SzJwRBSDRNd0in2JxLZ4bRjoFfhJLhOBo1V1nnlYAGB"
 address = "validator54.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-55"
+stake = 180000
 pubkey = "NC1G4vygx4PcuCmXTqGObwWcgt30tfffaqtAIQEd1zep4DHmwzjuih3CnlWR8B2THEMd"
 address = "validator55.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-56"
+stake = 000204
 pubkey = "usONX6pe0AmZ7Gu0avrFaD16ZSXG4CxYtmUMba1XWiiiBHtrYESzlgtuBBzZbwFwiYG0TIWHmtAVypwio75PsBG64Nzuvdl"
 address = "validator56.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-57"
+stake = 195000
 pubkey = "0y751itKkroLIKuKFczCmn56GNGaDjzHmoeGrk3GUzRUApaaW1qN3rD3WkeE7HxPcs7VhBKWvpJdRKx3z74kFu"
 address = "validator57.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-58"
+stake = 186000
 pubkey = "0yDV5ue1euulDJ18jHy4HmOwRRn0RknPeQScE0tXlXHS4OFL6HPhTQJ3U10dPZ10Y1rjbkFqjZDPydzklB7yf1j2yezYF5sOdRj3OWlgv5DGwdL4C"
 address = "validator58.pecunovus.org:7001"
