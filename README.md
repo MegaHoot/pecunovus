@@ -100,7 +100,7 @@ docker run -p 7001:7001 -p 8081:8081 pecunovus-node   --bind 0.0.0.0:7001 --rpc 
 
 - [x] Project scaffolding & module layout  
 - [x] Networking + CLI bootstrapping  
-- [x] Consensus PoH + PoS base logic  
+- [x] Consensus PoT + PoS base logic  
 - [x] Full P2P gossip layer  
 - [x] Parallel runtime execution  
 - [x] JSON-RPC routes  
