@@ -371,7 +371,7 @@ address = "validator55.pecunovus.org:7001"
 
 [[validators.validator]]
 name = "validator-56"
-stake = 000204
+stake = 203000
 pubkey = "usONX6pe0AmZ7Gu0avrFaD16ZSXG4CxYtmUMba1XWiiiBHtrYESzlgtuBBzZbwFwiYG0TIWHmtAVypwio75PsBG64Nzuvdl"
 address = "validator56.pecunovus.org:7001"
 
