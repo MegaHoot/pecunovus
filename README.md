@@ -348,7 +348,7 @@ Add Pecu Novus to MetaMask as a custom network:
 | Field | Value |
 |-------|-------|
 | Network Name | Pecu Novus Mainnet |
-| RPC URL | `http://localhost:8545` |
+| RPC URL | `https://mainnet.pecunovus.net` |
 | Chain ID | `3001` |
 | Currency Symbol | `PECU` |
 | Block Explorer | `https://pecuscan.com` |
