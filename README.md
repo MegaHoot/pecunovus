@@ -1,6 +1,12 @@
 # Pecu Novus Blockchain — Rust Implementation
 
-> **Pecu 2.0 / 3.0 Themis** | Hybrid Proof of Time (PoT) + Proof of Stake (PoS)
+<p><img src="https://img.shields.io/badge/License-Apache_2.0-green" alt="Apache 2.0">
+<img src="https://img.shields.io/badge/EVM-Compatible-blue" alt="EVM Compatible">
+<img src="https://img.shields.io/badge/Protocol-ERC--20_%2B_ERC--1400_%2B_PNP16-blue" alt="ERC-20">
+<img src="https://img.shields.io/badge/Tests-88_passing-brightgreen" alt="Tests">
+</p>
+
+**Pecu 2.0 / 3.0 Themis** | Hybrid Proof of Time (PoT) + Proof of Stake (PoS)
 > PNP16 + ERC-20 + ERC-1400 | 110,000+ TPS | EVM Compatible | Chain ID: 3001
 > Maintained by MegaHoot Technologies | Est. January 15, 2017
 
