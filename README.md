@@ -1,123 +1,354 @@
-# 📖 Pecunovus
+# Pecu Novus Blockchain — Rust Implementation
 
-Pecu Novus is a **Layer-1** blockchain network designed for financial applications, focusing on hybrid architecture, scalability, and user-friendliness to bridge traditional finance and blockchain technology.
-It supports **parallel runtime execution, RocksDB-backed state, validator voting with Tower BFT, and modular components** for networking, consensus, storage, and runtime.
-
----
-
-## 🚀 Features
-
-- **Hybrid Consensus (PoT + PoS)** with Tower BFT finality  
-- **Validator voting + block proposal** integrated with networking  
-- **RocksDB-backed ledger & state storage** (migratable from in-memory)  
-- **Parallel runtime executor** with account locks & caching  
-- **Transaction pool (TxPool)** with forwarding and ingestion  
-- **Pluggable crypto module** (Ed25519, VRF support)  
-- **P2P networking layer** with gossip, peer discovery, and secure handshakes  
-- **JSON-RPC API** for clients and wallets  
-- **Devnet tooling**: run multiple nodes locally, submit transactions, and verify block inclusion
+> **Pecu 2.0 / 3.0 Themis** | Hybrid Proof of Time (PoT) + Proof of Stake (PoS)
+> PNP16 + ERC-20 + ERC-1400 | 110,000+ TPS | EVM Compatible | Chain ID: 3001
+> Maintained by MegaHoot Technologies | Est. January 15, 2017
 
 ---
 
-## 📂 Project Structure
+## Overview
+
+This is a complete Rust implementation of the Pecu Novus blockchain network, built
+faithfully from the 2018 and 2024 official whitepapers and the `pecu-rpc` specification.
+
+### Architecture
 
 ```
-pecunovus/
+pecu-novus/
 ├── src/
-│   ├── api/          # External API definitions
-│   ├── node/         # Node bootstrap, CLI, services
-│   ├── network/      # P2P transport, gossip, peer management
-│   ├── consensus/    # PoT, PoS, Tower BFT, voting
-│   ├── ledger/       # Blockstore, snapshotting, pruning
-│   ├── runtime/      # Executor, VM, program loader
-│   ├── state/        # Accounts DB, locks, caching
-│   ├── txpool/       # Transaction pool & forwarding
-│   ├── storage/      # RocksDB / Sled stores
-│   ├── crypto/       # Keys, signing, VRFs
-│   ├── rpc/          # JSON-RPC server + handlers
-│   ├── utils/        # Logging, metrics, error handling
-│   └── tests/        # Integration & fuzz testing
-├── config/
-│   ├── devnet.toml   # Devnet config
-│   └── mainnet.toml  # Mainnet config
-├── Cargo.toml
-├── Dockerfile
-└── README.md
+│   ├── main.rs          Node entry point, block producer loop, validator rewards
+│   ├── lib.rs           Library exports
+│   ├── crypto/          SHA-512, SHA-256, Keccak-256, VDF, CBC encryption, Merkle
+│   ├── chain/           Block, Transaction, Blockchain state machine
+│   ├── consensus/       Hybrid PoT+PoS, Validator registry, Halving/Vesting schedules
+│   ├── tokens/          PNP16, ERC-20, ERC-1400, TokenRegistry
+│   ├── escrow/          MVault, EscrowContract, TransferCards, Cold Storage
+│   ├── wallet/          KeyPair, Wallet, GAK, DAK (KYC)
+│   ├── storage/         Sled-based persistent storage
+│   └── rpc/             45+ JSON-RPC methods (eth_*, erc20_*, pecu_*, pnp16_*, escrow_*)
+└── tests/
+    └── integration_tests.rs   88 tests covering all modules
 ```
 
 ---
 
-## ⚡ Getting Started
+## Quick Start
 
-### 1. Install Rust
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
+### Prerequisites
+- Rust 1.75+ (`rustup update stable`)
+- Cargo
 
-### 2. Clone & Build
+### Build & Run
+
 ```bash
-git clone https://github.com/your-org/pecunovus.git
-cd pecunovus
+# Build
 cargo build --release
+
+# Run node (default port 8545)
+./target/release/pecu-node
+
+# Custom port
+PECU_RPC_PORT=9000 ./target/release/pecu-node
+
+# Run tests (88 tests)
+cargo test
 ```
 
-### 3. Run a Node
+---
+
+## JSON-RPC API
+
+The node exposes a JSON-RPC server on `http://localhost:8545`.
+All requests use `POST /` or `POST /rpc` with `Content-Type: application/json`.
+
+### Request Format
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "method_name",
+  "params": [...],
+  "id": 1
+}
+```
+
+---
+
+## EVM / Ethereum-Compatible Methods
+
+These methods make Pecu Novus compatible with **MetaMask**, **Ethers.js**, and **Web3.js**.
+Simply point your wallet/dApp to `http://localhost:8545` with Chain ID `3001`.
+
+| Method | Description |
+|--------|-------------|
+| `eth_chainId` | Returns `0xBB9` (3001) |
+| `net_version` | Returns `"3001"` |
+| `eth_blockNumber` | Latest block height (hex) |
+| `eth_getBalance` | PECU balance for address |
+| `eth_getBlockByNumber` | Block by height or `"latest"` |
+| `eth_getBlockByHash` | Block by hash |
+| `eth_getTransactionByHash` | Transaction details |
+| `eth_sendRawTransaction` | Submit signed transaction |
+| `eth_call` | Call smart contract (read-only) |
+| `eth_gasPrice` | Current gas price |
+| `eth_estimateGas` | Estimate gas for transaction |
+| `eth_getTransactionCount` | Nonce for address |
+| `eth_getLogs` | Event logs |
+| `web3_clientVersion` | `"PecuNovus/v2.0.0-rust/Pecu3.0Themis"` |
+| `eth_syncing` | Sync status |
+| `eth_accounts` | Available accounts |
+
+### Example: Get Block Number
+
 ```bash
-cargo run -- --bind 127.0.0.1:7001 --rpc 127.0.0.1:8081 --db /tmp/node1
+curl http://localhost:8545 \
+  -X POST -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 ```
 
-Run a second node and connect to the first:
+```json
+{"jsonrpc":"2.0","result":"0x1","id":1}
+```
+
+---
+
+## ERC-20 Token Methods
+
+Full ERC-20 interface for PNP16 tokens.
+
+| Method | Params | Description |
+|--------|--------|-------------|
+| `erc20_balanceOf` | `[contract, address]` | Token balance |
+| `erc20_transfer` | `[contract, from, to, amount]` | Transfer tokens |
+| `erc20_approve` | `[contract, owner, spender, amount]` | Approve spender |
+| `erc20_allowance` | `[contract, owner, spender]` | Check allowance |
+| `erc20_transferFrom` | `[contract, spender, from, to, amount]` | Transfer on behalf |
+| `erc20_totalSupply` | `[contract]` | Total token supply |
+
+### Example: ERC-20 Transfer
+
 ```bash
-cargo run -- --bind 127.0.0.1:7002 --rpc 127.0.0.1:8082 --peers 127.0.0.1:7001 --db /tmp/node2
+curl http://localhost:8545 \
+  -X POST -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc":"2.0","method":"erc20_transfer","id":1,
+    "params":["0xContractAddress","0xFrom","0xTo","1000000000000000000"]
+  }'
 ```
 
 ---
 
-## 🧩 RPC API (coming soon)
+## Pecu Novus Native Methods
 
-- `get_balance(pubkey)` → account balance  
-- `send_transaction(tx)` → submit signed tx  
-- `submit_block(block)` → inject block proposal  
-- `get_block(slot)` → fetch block  
+| Method | Params | Description |
+|--------|--------|-------------|
+| `pecu_getNetworkInfo` | `[]` | Network details, consensus, TPS |
+| `pecu_getChainStats` | `[]` | Block height, tx count, burned PECU |
+| `pecu_sendTransaction` | `[from, to, amount, note?]` | Send PECU |
+| `pecu_getBalance` | `[address]` | PECU balance (raw + display) |
+| `pecu_createWallet` | `[]` | Generate new keypair + addresses |
+| `pecu_getWallet` | `[address]` | Wallet info |
+| `pecu_getValidators` | `[]` | All validators + weights |
+| `pecu_registerValidator` | `[address, stake]` | Register validator node |
+| `pecu_mineBlock` | `[]` | Produce a new PoT block |
+| `pecu_getHalvingSchedule` | `[]` | Reward halving table |
+| `pecu_getVestingSchedule` | `[]` | Token unlock schedule |
+| `pecu_getTokenomics` | `[]` | Full tokenomics summary |
 
----
+### Example: Create Wallet
 
-## 🐳 Running with Docker
-
-Build image:
 ```bash
-docker build -t pecunovus-node .
+curl http://localhost:8545 \
+  -X POST -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"pecu_createWallet","params":[],"id":1}'
 ```
 
-Run:
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "walletId": "a3f1b2c4-...",
+    "evmAddress": "0x1a2b3c4d...",
+    "pecuAddress": "5HueCGU8...",
+    "publicKey": "a1b2c3d4...",
+    "createdAt": 1713200000
+  },
+  "id": 1
+}
+```
+
+---
+
+## PNP16 Token Methods
+
+| Method | Params | Description |
+|--------|--------|-------------|
+| `pnp16_deployToken` | `[name, symbol, decimals, supply, creator, dak]` | Deploy new token |
+| `pnp16_listTokens` | `[]` | List all deployed tokens |
+| `pnp16_getToken` | `[contractAddress]` | Token details |
+| `pnp16_mint` | `[contract, to, amount]` | Mint new tokens |
+| `pnp16_burn` | `[contract, from, amount]` | Burn tokens |
+| `pnp16_transfer` | `[contract, from, to, amount]` | Transfer tokens |
+
+### Supported Asset Classes (PNP16)
+
+| Class | Description |
+|-------|-------------|
+| `FinancialAsset` | Company stake / equity |
+| `GamingAsset` | In-game rewards, points, skills |
+| `PhysicalCommodity` | Gold, silver, oil, agricultural products |
+| `FractionalRealEstate` | Tokenized property ownership |
+| `IntellectualProperty` | Music, film, software royalties |
+| `Stablecoin` | Fiat-pegged tokens |
+| `SecurityToken` | ERC-1400 regulated securities |
+| `Utility` | General utility |
+
+### Example: Deploy PNP16 / ERC-20 Token
+
 ```bash
-docker run -p 7001:7001 -p 8081:8081 pecunovus-node   --bind 0.0.0.0:7001 --rpc 0.0.0.0:8081 --db /data/db
+curl http://localhost:8545 \
+  -X POST -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc":"2.0","method":"pnp16_deployToken","id":1,
+    "params":["PecuGold","PGLD",18,"1000000000000000000000000","0xYourAddress","YOUR_DAK"]
+  }'
 ```
 
 ---
 
-## ⚙️ Roadmap
+## Escrow / MVault Methods
 
-- [x] Project scaffolding & module layout  
-- [x] Networking + CLI bootstrapping  
-- [x] Consensus PoT + PoS base logic  
-- [x] Full P2P gossip layer  
-- [x] Parallel runtime execution  
-- [x] JSON-RPC routes  
-- [x] Devnet harness with multiple nodes  
+Based on the MVault system from the whitepaper — no-code escrow deployment.
+
+| Method | Params | Description |
+|--------|--------|-------------|
+| `escrow_create` | `[sender, receiver, amount, releaseDate, note?, agreement?]` | Create escrow |
+| `escrow_release` | `[escrowId, earlyRelease?]` | Release funds |
+| `escrow_cancel` | `[escrowId]` | Cancel escrow (sender only) |
+| `escrow_get` | `[escrowId]` | Escrow details |
+| `escrow_listByAddress` | `[address]` | Pending escrows for address |
+| `transfercard_create` | `[issuer, amount, tokenContract?, expiresAt?, useCase]` | Create Transfer Card |
+| `transfercard_redeem` | `[redemptionKey, redeemer]` | Redeem Transfer Card |
+
+### Example: Create Escrow (Real Estate)
+
+```bash
+curl http://localhost:8545 \
+  -X POST -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc":"2.0","method":"escrow_create","id":1,
+    "params":[
+      "0xBuyer","0xSeller","5000000000000000000000",
+      1735689600,
+      "Property deposit: 123 Blockchain Ave",
+      "Release on deed transfer completion"
+    ]
+  }'
+```
 
 ---
 
-## 👩‍💻 Contributing
+## Cold Storage (CSS) Methods
 
-1. Fork this repo  
-2. Create a feature branch (`git checkout -b feature/awesome`)  
-3. Commit changes (`git commit -m 'Add awesome feature'`)  
-4. Push branch (`git push origin feature/awesome`)  
-5. Open a Pull Request 🎉  
+| Method | Params | Description |
+|--------|--------|-------------|
+| `css_moveToColdStorage` | `[address, amount]` | Move PECU offline, returns unique key |
+| `css_redeemColdStorage` | `[address, storageKey]` | Bring assets back online |
 
 ---
 
-## 📜 License
+## Access Key Methods
 
-MIT License © 2025 Pecunovus Authors
+| Method | Params | Description |
+|--------|--------|-------------|
+| `gak_connect` | `[address, appId, ttlSeconds?]` | Connect wallet to app (GAK) |
+| `gak_disconnect` | `[address, appId]` | Disconnect wallet from app |
+| `dak_register` | `[developerName, email]` | Register for Development Access Key |
+| `dak_verifyKyc` | `[dakId]` | Verify KYC (activates DAK) |
+
+---
+
+## Consensus: Hybrid PoT + PoS
+
+### Proof of Time (PoT)
+
+Based on Verifiable Delay Functions (VDF):
+
+```
+y = x^(2^T) mod N
+```
+
+- `x` = input seed (transaction hash / block hash)
+- `T` = delay steps (sequential, non-parallelizable)
+- `y` = output proof (instantly verifiable)
+
+### Hybrid Selection (Pecu 3.0 Themis)
+
+Validator weight = `uptime_seconds × √(stake + 1)`
+
+This combines:
+- **Time commitment** (PoT) — long-running nodes weighted higher
+- **Economic stake** (PoS) — stake adds accountability without centralizing
+- **BFT guarantees** — tolerates Byzantine failures up to ⅓ of validators
+
+### Validator Rewards (Whitepaper)
+
+| Parameter | Value |
+|-----------|-------|
+| Reward per node per 24h | 0.25 – 1.50 PECU (randomized) |
+| Daily cap (all validators) | ~55,000 PECU |
+| Annual cap | 20,000,000 PECU |
+| First halving | 2027 |
+| Halving frequency | Every 10 years |
+
+---
+
+## Tokenomics
+
+| Metric | Value |
+|--------|-------|
+| Max supply | 1,000,000,000 PECU (fixed, never exceeded) |
+| Decimal places | 15 |
+| Gas fee | 0.0025% flat (all transaction types) |
+| Fee burn | 50% of all gas fees permanently burned |
+| Validator gets | 50% of gas fees |
+
+### Halving Schedule
+
+| Period | Max Annual Reward |
+|--------|-------------------|
+| 2017 – 2027 | 20,000,000 PECU |
+| 2027 – 2037 | 10,000,000 PECU |
+| 2037 – 2047 | 5,000,000 PECU |
+| 2047 – 2057 | 2,500,000 PECU |
+| 2057+ | 1,250,000 PECU |
+
+### Vesting Schedule (Locked Tokens)
+
+| Release Year | Amount |
+|-------------|--------|
+| 2026 | 40,000,000 PECU |
+| 2028 | 30,000,000 PECU |
+| 2030 | 30,000,000 PECU |
+| 2032 | 20,000,000 PECU |
+| 2034 | 10,000,000 PECU |
+
+---
+
+## MetaMask Integration
+
+Add Pecu Novus to MetaMask as a custom network:
+
+| Field | Value |
+|-------|-------|
+| Network Name | Pecu Novus Mainnet |
+| RPC URL | `http://localhost:8545` |
+| Chain ID | `3001` |
+| Currency Symbol | `PECU` |
+| Block Explorer | `https://pecuscan.com` |
+
+---
+
+## License
+
+Apache License 2.0 — © 2017–2026 Pecu Novus Network / MegaHoot Technologies
