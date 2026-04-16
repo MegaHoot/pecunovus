@@ -7,7 +7,7 @@
 </p>
 
 **Pecu 2.0 / 3.0 Themis** | Hybrid Proof of Time (PoT) + Proof of Stake (PoS)
-> PNP16 + ERC-20 + ERC-1400 | 110,000+ TPS | EVM Compatible | Chain ID: 3001
+> PNP16 + ERC-20 + ERC-1400 | 110,000+ TPS | EVM Compatible | Chain ID: 27272727
 > Maintained by MegaHoot Technologies | Est. January 15, 2017
 
 ---
@@ -83,12 +83,12 @@ All requests use `POST /` or `POST /rpc` with `Content-Type: application/json`.
 ## EVM / Ethereum-Compatible Methods
 
 These methods make Pecu Novus compatible with **MetaMask**, **Ethers.js**, and **Web3.js**.
-Simply point your wallet/dApp to `http://localhost:8545` with Chain ID `3001`.
+Simply point your wallet/dApp to `http://localhost:8545` with Chain ID `27272727`.
 
 | Method | Description |
 |--------|-------------|
-| `eth_chainId` | Returns `0xBB9` (3001) |
-| `net_version` | Returns `"3001"` |
+| `eth_chainId` | Returns `0x19FAFB7` (27272727) |
+| `net_version` | Returns `"27272727"` |
 | `eth_blockNumber` | Latest block height (hex) |
 | `eth_getBalance` | PECU balance for address |
 | `eth_getBlockByNumber` | Block by height or `"latest"` |
