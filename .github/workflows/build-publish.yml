@@ -7,12 +7,9 @@ on:
   push:
     branches:
       - main
-      - gh-setup
+      
     tags:
       - "v*.*.*"
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
