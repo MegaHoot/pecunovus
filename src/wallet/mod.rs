@@ -40,7 +40,12 @@ impl KeyPair {
         let private_key = crypto::generate_private_key(&public_key);
         let evm_address = crypto::public_key_to_address(&public_key);
         let pecu_address = crypto::public_key_to_pecu_address(&public_key);
-        KeyPair { public_key, private_key, evm_address, pecu_address }
+        KeyPair {
+            public_key,
+            private_key,
+            evm_address,
+            pecu_address,
+        }
     }
 
     pub fn sign(&self, data: &str) -> String {
@@ -95,7 +100,9 @@ impl GeneralAccessKey {
     }
 
     pub fn is_valid(&self) -> bool {
-        if !self.is_connected { return false; }
+        if !self.is_connected {
+            return false;
+        }
         if let Some(exp) = self.expires_at {
             return Utc::now().timestamp() < exp;
         }
@@ -221,7 +228,9 @@ impl Wallet {
 
     /// Move assets to cold storage (CSS feature from whitepaper)
     pub fn move_to_cold_storage(&mut self, amount: u128) -> Option<String> {
-        if !self.debit(amount) { return None; }
+        if !self.debit(amount) {
+            return None;
+        }
         let storage_key = format!("CSS_{}", crypto::generate_public_key());
         self.cold_storage.insert(storage_key.clone(), amount);
         Some(storage_key)

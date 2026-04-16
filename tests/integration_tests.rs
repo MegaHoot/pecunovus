@@ -17,15 +17,15 @@
 // Pecu Novus Blockchain — Full Integration Test Suite
 // Tests: crypto, chain, consensus, tokens (PNP16/ERC-20), escrow, wallet, RPC
 
+use chrono::Utc;
 use pecu_novus::{
     chain::{Block, Blockchain, Transaction, TransactionType},
-    consensus::{ProofOfTime, Validator, HalvingSchedule, VestingSchedule},
+    consensus::{HalvingSchedule, ProofOfTime, Validator, VestingSchedule},
     crypto,
     escrow::{EscrowContract, EscrowStatus, MVault, TransferCard, TransferCardUseCase},
     tokens::{AssetClass, ERC1400Token, PNP16Token, TokenRegistry},
     wallet::{DevelopmentAccessKey, GeneralAccessKey, KeyPair, Wallet},
 };
-use chrono::Utc;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // CRYPTO TESTS
@@ -59,8 +59,11 @@ mod crypto_tests {
     fn test_public_key_length_matches_whitepaper() {
         // Whitepaper: "Random lengths of numbers and letters, between 64 to 128"
         let pk = crypto::generate_public_key();
-        assert!(pk.len() >= 64 && pk.len() <= 128,
-            "Public key length {} not in range [64,128]", pk.len());
+        assert!(
+            pk.len() >= 64 && pk.len() <= 128,
+            "Public key length {} not in range [64,128]",
+            pk.len()
+        );
     }
 
     #[test]
@@ -68,8 +71,11 @@ mod crypto_tests {
         // Whitepaper: "between 60 to 102, a combination of Strings and Integers"
         let pk = crypto::generate_public_key();
         let sk = crypto::generate_private_key(&pk);
-        assert!(sk.len() >= 60 && sk.len() <= 128,
-            "Private key length {} not in range [60,128]", sk.len());
+        assert!(
+            sk.len() >= 60 && sk.len() <= 128,
+            "Private key length {} not in range [60,128]",
+            sk.len()
+        );
     }
 
     #[test]
@@ -139,7 +145,9 @@ mod crypto_tests {
         let addr = crypto::public_key_to_pecu_address("test_pub_key");
         assert!(!addr.is_empty());
         // Base58 chars only
-        assert!(addr.chars().all(|c| "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".contains(c)));
+        assert!(addr
+            .chars()
+            .all(|c| "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".contains(c)));
     }
 }
 
@@ -189,7 +197,10 @@ mod wallet_tests {
         let mut kp = KeyPair::generate();
         let old_addr = kp.evm_address.clone();
         kp.refresh_public_key();
-        assert_ne!(kp.evm_address, old_addr, "Refreshed public key must change address");
+        assert_ne!(
+            kp.evm_address, old_addr,
+            "Refreshed public key must change address"
+        );
     }
 
     #[test]
@@ -217,7 +228,11 @@ mod wallet_tests {
         assert!(gak.is_valid());
         w.disconnect_from_app("HootDex");
         // Session marked disconnected
-        let session = w.gak_sessions.iter().find(|g| g.app_id == "HootDex").unwrap();
+        let session = w
+            .gak_sessions
+            .iter()
+            .find(|g| g.app_id == "HootDex")
+            .unwrap();
         assert!(!session.is_connected);
     }
 
@@ -244,8 +259,15 @@ mod chain_tests {
     fn make_test_tx(sender: &str, receiver: &str, amount: u128) -> Transaction {
         Transaction::new(
             TransactionType::Transfer,
-            sender, receiver, amount,
-            None, None, false, None, None, 0,
+            sender,
+            receiver,
+            amount,
+            None,
+            None,
+            false,
+            None,
+            None,
+            0,
         )
     }
 
@@ -267,21 +289,27 @@ mod chain_tests {
     fn test_transaction_gas_fee_flat_rate() {
         // Whitepaper: "flat gas fee of just 0.0025%"
         let tx = make_test_tx("alice", "bob", 1_000_000);
-        let expected = 1_000_000u128 * 25 / 1_000_000;  // 0.0025%
+        let expected = 1_000_000u128 * 25 / 1_000_000; // 0.0025%
         assert_eq!(tx.gas_fee, expected, "Gas fee must be exactly 0.0025%");
     }
 
     #[test]
     fn test_transaction_burn_amount_is_half_fee() {
         let tx = make_test_tx("alice", "bob", 2_000_000);
-        assert_eq!(tx.burned_amount(), tx.gas_fee / 2, "50% of fee must be burned");
+        assert_eq!(
+            tx.burned_amount(),
+            tx.gas_fee / 2,
+            "50% of fee must be burned"
+        );
     }
 
     #[test]
     fn test_add_valid_tx_to_mempool() {
         let bc = Blockchain::new();
         // Fund sender from genesis balances
-        bc.balances.write().insert("alice".to_string(), 999_999_999_999_999_999u128);
+        bc.balances
+            .write()
+            .insert("alice".to_string(), 999_999_999_999_999_999u128);
         let tx = make_test_tx("alice", "bob", 1_000);
         assert!(bc.add_to_mempool(tx).is_ok());
         assert_eq!(bc.mempool.read().len(), 1);
@@ -297,7 +325,9 @@ mod chain_tests {
     #[test]
     fn test_commit_block_updates_balances() {
         let bc = Blockchain::new();
-        bc.balances.write().insert("alice".to_string(), 100_000_000u128);
+        bc.balances
+            .write()
+            .insert("alice".to_string(), 100_000_000u128);
 
         let tx = make_test_tx("alice", "bob", 10_000);
         bc.add_to_mempool(tx).unwrap();
@@ -314,7 +344,9 @@ mod chain_tests {
     #[test]
     fn test_block_hash_links_to_previous() {
         let bc = Blockchain::new();
-        bc.balances.write().insert("alice".to_string(), 999_999_999u128);
+        bc.balances
+            .write()
+            .insert("alice".to_string(), 999_999_999u128);
 
         let tx = make_test_tx("alice", "bob", 100);
         bc.add_to_mempool(tx).unwrap();
@@ -361,13 +393,22 @@ mod chain_tests {
     #[test]
     fn test_total_burned_accumulates() {
         let bc = Blockchain::new();
-        bc.balances.write().insert("alice".to_string(), 999_999_999_999u128);
+        bc.balances
+            .write()
+            .insert("alice".to_string(), 999_999_999_999u128);
 
         for i in 0..3 {
             let tx = Transaction::new(
                 TransactionType::Transfer,
-                "alice", "bob", 1_000_000,
-                None, None, false, None, None, i,
+                "alice",
+                "bob",
+                1_000_000,
+                None,
+                None,
+                false,
+                None,
+                None,
+                i,
             );
             bc.add_to_mempool(tx).unwrap();
         }
@@ -377,7 +418,10 @@ mod chain_tests {
         let block = Block::new(1, &bc.latest_block().hash, txs, "v1", proof);
         bc.commit_block(block).unwrap();
 
-        assert!(*bc.total_burned.read() > 0, "Burn mechanism must reduce total supply");
+        assert!(
+            *bc.total_burned.read() > 0,
+            "Burn mechanism must reduce total supply"
+        );
     }
 }
 
@@ -439,7 +483,7 @@ mod consensus_tests {
     fn test_validator_reward_within_bounds() {
         let v = Validator::new("0xAlice", 1_000);
         let reward = v.daily_reward();
-        assert!(reward >= 250_000_000_000_000u128);   // 0.25 PECU min
+        assert!(reward >= 250_000_000_000_000u128); // 0.25 PECU min
         assert!(reward <= 1_500_000_000_000_000u128); // 1.50 PECU max
     }
 
@@ -454,7 +498,10 @@ mod consensus_tests {
         }
         let rewards = pot.issue_daily_rewards();
         let total: u128 = rewards.iter().map(|r| r.amount).sum();
-        assert!(total <= 55_000_000_000_000_000_000u128, "Daily cap exceeded: {total}");
+        assert!(
+            total <= 55_000_000_000_000_000_000u128,
+            "Daily cap exceeded: {total}"
+        );
     }
 
     #[test]
@@ -496,8 +543,14 @@ mod token_tests {
 
     fn make_token(name: &str, symbol: &str, supply: u128) -> PNP16Token {
         PNP16Token::new(
-            name, symbol, 18, supply, None,
-            AssetClass::Utility, "0xCreator", "DAK_TEST",
+            name,
+            symbol,
+            18,
+            supply,
+            None,
+            AssetClass::Utility,
+            "0xCreator",
+            "DAK_TEST",
         )
     }
 
@@ -543,7 +596,8 @@ mod token_tests {
     fn test_erc20_transfer_from() {
         let mut t = make_token("TestToken", "TTK", 1_000);
         t.approve("0xCreator", "0xSpender", 500).unwrap();
-        t.transfer_from("0xSpender", "0xCreator", "0xReceiver", 200).unwrap();
+        t.transfer_from("0xSpender", "0xCreator", "0xReceiver", 200)
+            .unwrap();
         assert_eq!(t.balance_of("0xReceiver"), 200);
         assert_eq!(t.allowance("0xCreator", "0xSpender"), 300); // allowance reduced
     }
@@ -567,12 +621,17 @@ mod token_tests {
     #[test]
     fn test_pnp16_mint_respects_max_supply() {
         let mut t = PNP16Token::new(
-            "Capped", "CAP", 18, 900,
+            "Capped",
+            "CAP",
+            18,
+            900,
             Some(1_000), // max supply = 1000
-            AssetClass::Utility, "0xCreator", "DAK",
+            AssetClass::Utility,
+            "0xCreator",
+            "DAK",
         );
-        assert!(t.mint("0xBob", 100).is_ok());  // 900+100=1000 OK
-        assert!(t.mint("0xBob", 1).is_err());   // 1001 > 1000 FAIL
+        assert!(t.mint("0xBob", 100).is_ok()); // 900+100=1000 OK
+        assert!(t.mint("0xBob", 1).is_err()); // 1001 > 1000 FAIL
     }
 
     #[test]
@@ -610,7 +669,8 @@ mod token_tests {
     fn test_erc1400_security_token_partition() {
         let base = make_token("SecurityToken", "SEC", 0);
         let mut st = ERC1400Token::new(base, vec!["0xController".to_string()]);
-        st.issue_by_partition("tranche_a", "0xInvestor", 1_000).unwrap();
+        st.issue_by_partition("tranche_a", "0xInvestor", 1_000)
+            .unwrap();
         assert_eq!(st.balance_of_by_partition("tranche_a", "0xInvestor"), 1_000);
     }
 
@@ -635,10 +695,46 @@ mod token_tests {
     #[test]
     fn test_token_asset_classes_pnp16() {
         // Whitepaper: financial, gaming, physical commodity, real estate
-        let financial = PNP16Token::new("CompanyToken","COMP",18,1_000,None,AssetClass::FinancialAsset,"0xC","DAK");
-        let gaming    = PNP16Token::new("GameToken","GAME",0,1_000_000,None,AssetClass::GamingAsset,"0xC","DAK");
-        let gold      = PNP16Token::new("GoldToken","GOLD",8,21_000_000,None,AssetClass::PhysicalCommodity,"0xC","DAK");
-        let realty    = PNP16Token::new("RealtyToken","RLTY",6,1_000,None,AssetClass::FractionalRealEstate,"0xC","DAK");
+        let financial = PNP16Token::new(
+            "CompanyToken",
+            "COMP",
+            18,
+            1_000,
+            None,
+            AssetClass::FinancialAsset,
+            "0xC",
+            "DAK",
+        );
+        let gaming = PNP16Token::new(
+            "GameToken",
+            "GAME",
+            0,
+            1_000_000,
+            None,
+            AssetClass::GamingAsset,
+            "0xC",
+            "DAK",
+        );
+        let gold = PNP16Token::new(
+            "GoldToken",
+            "GOLD",
+            8,
+            21_000_000,
+            None,
+            AssetClass::PhysicalCommodity,
+            "0xC",
+            "DAK",
+        );
+        let realty = PNP16Token::new(
+            "RealtyToken",
+            "RLTY",
+            6,
+            1_000,
+            None,
+            AssetClass::FractionalRealEstate,
+            "0xC",
+            "DAK",
+        );
         assert_eq!(financial.asset_class, AssetClass::FinancialAsset);
         assert_eq!(gaming.asset_class, AssetClass::GamingAsset);
         assert_eq!(gold.asset_class, AssetClass::PhysicalCommodity);
@@ -665,10 +761,14 @@ mod escrow_tests {
     #[test]
     fn test_escrow_creation() {
         let e = EscrowContract::new(
-            "0xAlice", "0xBob", 50_000,
+            "0xAlice",
+            "0xBob",
+            50_000,
             future_date(86400),
             Some("Property deposit".to_string()),
-            None, None, vec![],
+            None,
+            None,
+            vec![],
         );
         assert_eq!(e.status, EscrowStatus::Locked);
         assert!(!e.escrow_key.is_empty());
@@ -678,9 +778,14 @@ mod escrow_tests {
     #[test]
     fn test_escrow_not_released_before_date() {
         let mut e = EscrowContract::new(
-            "0xAlice", "0xBob", 1_000,
+            "0xAlice",
+            "0xBob",
+            1_000,
             future_date(9999),
-            None, None, None, vec![],
+            None,
+            None,
+            None,
+            vec![],
         );
         assert!(!e.try_release(), "Must not release before date");
         assert_eq!(e.status, EscrowStatus::Locked);
@@ -689,9 +794,14 @@ mod escrow_tests {
     #[test]
     fn test_escrow_releases_after_date() {
         let mut e = EscrowContract::new(
-            "0xAlice", "0xBob", 1_000,
+            "0xAlice",
+            "0xBob",
+            1_000,
             past_date(1), // already past
-            None, None, None, vec![],
+            None,
+            None,
+            None,
+            vec![],
         );
         assert!(e.try_release(), "Must release after date");
         assert_eq!(e.status, EscrowStatus::Released);
@@ -700,9 +810,14 @@ mod escrow_tests {
     #[test]
     fn test_escrow_early_release_by_sender() {
         let mut e = EscrowContract::new(
-            "0xAlice", "0xBob", 1_000,
+            "0xAlice",
+            "0xBob",
+            1_000,
             future_date(86400),
-            None, None, None, vec![],
+            None,
+            None,
+            None,
+            vec![],
         );
         assert!(e.release_early());
         assert_eq!(e.status, EscrowStatus::Released);
@@ -711,9 +826,14 @@ mod escrow_tests {
     #[test]
     fn test_escrow_cancel() {
         let mut e = EscrowContract::new(
-            "0xAlice", "0xBob", 1_000,
+            "0xAlice",
+            "0xBob",
+            1_000,
             future_date(86400),
-            None, None, None, vec![],
+            None,
+            None,
+            None,
+            vec![],
         );
         assert!(e.cancel());
         assert_eq!(e.status, EscrowStatus::Canceled);
@@ -722,9 +842,14 @@ mod escrow_tests {
     #[test]
     fn test_escrow_cancel_after_release_fails() {
         let mut e = EscrowContract::new(
-            "0xAlice", "0xBob", 1_000,
+            "0xAlice",
+            "0xBob",
+            1_000,
             past_date(1),
-            None, None, None, vec![],
+            None,
+            None,
+            None,
+            vec![],
         );
         e.try_release();
         assert!(!e.cancel(), "Cannot cancel already-released escrow");
@@ -734,9 +859,14 @@ mod escrow_tests {
     fn test_escrow_required_actions() {
         let actions = vec!["sign_deed".to_string(), "pay_deposit".to_string()];
         let mut e = EscrowContract::new(
-            "0xAlice", "0xBob", 50_000,
+            "0xAlice",
+            "0xBob",
+            50_000,
             past_date(1),
-            None, None, None, actions,
+            None,
+            None,
+            None,
+            actions,
         );
         // Not released because actions incomplete
         assert!(!e.try_release());
@@ -749,9 +879,14 @@ mod escrow_tests {
     #[test]
     fn test_escrow_dispute() {
         let mut e = EscrowContract::new(
-            "0xAlice", "0xBob", 1_000,
+            "0xAlice",
+            "0xBob",
+            1_000,
             future_date(86400),
-            None, None, None, vec![],
+            None,
+            None,
+            None,
+            vec![],
         );
         e.raise_dispute();
         assert_eq!(e.status, EscrowStatus::Disputed);
@@ -760,7 +895,9 @@ mod escrow_tests {
     #[test]
     fn test_transfer_card_create_and_redeem() {
         let mut card = TransferCard::new(
-            "0xIssuer", 500, None,
+            "0xIssuer",
+            500,
+            None,
             Some(future_date(3600)),
             TransferCardUseCase::EventGiveaway,
         );
@@ -773,7 +910,10 @@ mod escrow_tests {
     #[test]
     fn test_transfer_card_double_redeem_fails() {
         let mut card = TransferCard::new(
-            "0xIssuer", 100, None, None,
+            "0xIssuer",
+            100,
+            None,
+            None,
             TransferCardUseCase::GiftingDigitalAssets,
         );
         card.redeem("0xAlice").unwrap();
@@ -783,7 +923,9 @@ mod escrow_tests {
     #[test]
     fn test_transfer_card_expiry() {
         let mut card = TransferCard::new(
-            "0xIssuer", 100, None,
+            "0xIssuer",
+            100,
+            None,
             Some(past_date(1)), // already expired
             TransferCardUseCase::TokenLaunch,
         );
@@ -795,10 +937,14 @@ mod escrow_tests {
     fn test_mvault_create_and_retrieve_escrow() {
         let mut vault = MVault::new();
         let contract = vault.create_escrow(
-            "0xAlice", "0xBob", 10_000,
+            "0xAlice",
+            "0xBob",
+            10_000,
             future_date(86400),
             Some("Test escrow".to_string()),
-            None, None, vec![],
+            None,
+            None,
+            vec![],
         );
         let id = contract.escrow_id.clone();
         assert!(vault.get_escrow(&id).is_some());
@@ -807,9 +953,36 @@ mod escrow_tests {
     #[test]
     fn test_mvault_list_pending_for_address() {
         let mut vault = MVault::new();
-        vault.create_escrow("0xAlice","0xBob",1_000,future_date(100),None,None,None,vec![]);
-        vault.create_escrow("0xAlice","0xCarol",2_000,future_date(200),None,None,None,vec![]);
-        vault.create_escrow("0xDave","0xEve",3_000,future_date(300),None,None,None,vec![]);
+        vault.create_escrow(
+            "0xAlice",
+            "0xBob",
+            1_000,
+            future_date(100),
+            None,
+            None,
+            None,
+            vec![],
+        );
+        vault.create_escrow(
+            "0xAlice",
+            "0xCarol",
+            2_000,
+            future_date(200),
+            None,
+            None,
+            None,
+            vec![],
+        );
+        vault.create_escrow(
+            "0xDave",
+            "0xEve",
+            3_000,
+            future_date(300),
+            None,
+            None,
+            None,
+            vec![],
+        );
         let pending = vault.pending_escrows_for("0xAlice");
         assert_eq!(pending.len(), 2);
     }
@@ -817,8 +990,17 @@ mod escrow_tests {
     #[test]
     fn test_mvault_auto_release_processing() {
         let mut vault = MVault::new();
-        vault.create_escrow("0xA","0xB",1_000,past_date(10),None,None,None,vec![]);
-        vault.create_escrow("0xC","0xD",2_000,future_date(9999),None,None,None,vec![]);
+        vault.create_escrow("0xA", "0xB", 1_000, past_date(10), None, None, None, vec![]);
+        vault.create_escrow(
+            "0xC",
+            "0xD",
+            2_000,
+            future_date(9999),
+            None,
+            None,
+            None,
+            vec![],
+        );
         let released = vault.process_auto_releases();
         assert_eq!(released.len(), 1);
     }
@@ -878,8 +1060,12 @@ mod tokenomics_tests {
         let h = HalvingSchedule::official();
         for i in 0..h.entries.len() - 1 {
             let current = h.entries[i].max_annual_reward;
-            let next    = h.entries[i + 1].max_annual_reward;
-            assert_eq!(next, current / 2, "Each halving must cut reward by exactly 50%");
+            let next = h.entries[i + 1].max_annual_reward;
+            assert_eq!(
+                next,
+                current / 2,
+                "Each halving must cut reward by exactly 50%"
+            );
         }
     }
 }
@@ -897,30 +1083,44 @@ mod e2e_tests {
     fn test_full_defi_workflow() {
         // 1. Create wallets
         let alice = Wallet::new();
-        let bob   = Wallet::new();
+        let bob = Wallet::new();
         let alice_addr = alice.keypair.evm_address.clone();
-        let bob_addr   = bob.keypair.evm_address.clone();
+        let bob_addr = bob.keypair.evm_address.clone();
 
         // 2. Set up blockchain with balances
         let bc = Blockchain::new();
-        bc.balances.write().insert(alice_addr.clone(), 100_000_000_000_000_000_000u128);
+        bc.balances
+            .write()
+            .insert(alice_addr.clone(), 100_000_000_000_000_000_000u128);
 
         // 3. Deploy PNP16 / ERC-20 token
         let mut registry = TokenRegistry::new();
         let mut token = PNP16Token::new(
-            "AliceCoin", "ALC", 18,
+            "AliceCoin",
+            "ALC",
+            18,
             1_000_000_000_000_000_000_000u128,
-            None, AssetClass::FinancialAsset, &alice_addr, "DAK_E2E",
+            None,
+            AssetClass::FinancialAsset,
+            &alice_addr,
+            "DAK_E2E",
         );
         let contract_addr = token.contract_address.clone();
 
         // 4. Transfer tokens Alice → Bob
-        token.transfer(&alice_addr, &bob_addr, 100_000_000_000_000_000_000u128).unwrap();
+        token
+            .transfer(&alice_addr, &bob_addr, 100_000_000_000_000_000_000u128)
+            .unwrap();
         assert_eq!(token.balance_of(&bob_addr), 100_000_000_000_000_000_000u128);
 
         // 5. Bob approves Alice as spender
-        token.approve(&bob_addr, &alice_addr, 50_000_000_000_000_000_000u128).unwrap();
-        assert_eq!(token.allowance(&bob_addr, &alice_addr), 50_000_000_000_000_000_000u128);
+        token
+            .approve(&bob_addr, &alice_addr, 50_000_000_000_000_000_000u128)
+            .unwrap();
+        assert_eq!(
+            token.allowance(&bob_addr, &alice_addr),
+            50_000_000_000_000_000_000u128
+        );
 
         registry.deploy_pnp16(token);
 
@@ -928,10 +1128,15 @@ mod e2e_tests {
         let nonce = bc.get_nonce(&alice_addr);
         let tx = Transaction::new(
             TransactionType::Transfer,
-            &alice_addr, &bob_addr,
+            &alice_addr,
+            &bob_addr,
             1_000_000_000_000_000u128,
             Some("E2E test payment".to_string()),
-            None, false, None, None, nonce,
+            None,
+            false,
+            None,
+            None,
+            nonce,
         );
         bc.add_to_mempool(tx).unwrap();
 
@@ -950,11 +1155,14 @@ mod e2e_tests {
         // 8. Create escrow
         let mut vault = MVault::new();
         let escrow = vault.create_escrow(
-            &alice_addr, &bob_addr,
+            &alice_addr,
+            &bob_addr,
             500_000_000_000_000u128,
             Utc::now().timestamp() - 1, // immediately releasable
             Some("Service payment".to_string()),
-            None, None, vec![],
+            None,
+            None,
+            vec![],
         );
         let eid = escrow.escrow_id.clone();
         let released_ids = vault.process_auto_releases();
@@ -964,7 +1172,7 @@ mod e2e_tests {
     /// Real-estate tokenization scenario from whitepaper
     #[test]
     fn test_real_estate_tokenization() {
-        let owner    = Wallet::new();
+        let owner = Wallet::new();
         let investor = Wallet::new();
 
         let property_token = PNP16Token::new(
@@ -983,7 +1191,13 @@ mod e2e_tests {
         let token = registry.get_token_mut(&addr).unwrap();
 
         // Sell 100,000 shares (10%) to investor
-        token.transfer(&owner.keypair.evm_address, &investor.keypair.evm_address, 100_000).unwrap();
+        token
+            .transfer(
+                &owner.keypair.evm_address,
+                &investor.keypair.evm_address,
+                100_000,
+            )
+            .unwrap();
         assert_eq!(token.balance_of(&investor.keypair.evm_address), 100_000);
         assert_eq!(token.balance_of(&owner.keypair.evm_address), 900_000);
     }
@@ -991,7 +1205,7 @@ mod e2e_tests {
     /// Intellectual property royalty scenario
     #[test]
     fn test_ip_royalty_token() {
-        let artist   = Wallet::new();
+        let artist = Wallet::new();
         let platform = Wallet::new();
 
         let ip_token = PNP16Token::new(
@@ -1033,10 +1247,14 @@ mod e2e_tests {
         }
 
         // Attendees redeem
-        let amount = vault.redeem_transfer_card(&cards[0], "0xAttendee1").unwrap();
+        let amount = vault
+            .redeem_transfer_card(&cards[0], "0xAttendee1")
+            .unwrap();
         assert_eq!(amount, 1_000_000_000_000_000u128);
 
         // Cannot redeem same card twice
-        assert!(vault.redeem_transfer_card(&cards[0], "0xAttendee2").is_err());
+        assert!(vault
+            .redeem_transfer_card(&cards[0], "0xAttendee2")
+            .is_err());
     }
 }

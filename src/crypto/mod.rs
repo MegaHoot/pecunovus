@@ -21,11 +21,11 @@
 //   - Public/Private key generation (matching whitepaper spec)
 //   - Cipher Block Chaining (CBC) encryption for block data
 
-use sha2::{Sha256, Sha512, Digest};
-use sha3::Keccak256;
 use hex;
-use rand::{Rng, thread_rng};
+use rand::{thread_rng, Rng};
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256, Sha512};
+use sha3::Keccak256;
 use std::fmt;
 
 // ─── SHA-512 Hash (original Pecu Novus encryption standard) ──────────────────
@@ -90,7 +90,11 @@ pub fn generate_private_key(public_key: &str) -> String {
     let seed = format!("{}{}{}", public_key, timestamp, hex::encode(&random_suffix));
     let sha_hash = sha512(seed.as_bytes());
     let random_part = hex::encode(&random_suffix);
-    let combined = format!("{}{}", &sha_hash[..60], &random_part[..random_part.len().min(42)]);
+    let combined = format!(
+        "{}{}",
+        &sha_hash[..60],
+        &random_part[..random_part.len().min(42)]
+    );
     let len = rng.gen_range(60..=102);
     combined[..len.min(combined.len())].to_string()
 }
@@ -128,11 +132,11 @@ pub fn compute_block_address(
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VdfProof {
-    pub input: String,   // x - seed (transaction hash / block hash)
-    pub output: String,  // y = x^(2^T) mod N
-    pub delay: u64,      // T - required delay steps
+    pub input: String,  // x - seed (transaction hash / block hash)
+    pub output: String, // y = x^(2^T) mod N
+    pub delay: u64,     // T - required delay steps
     pub timestamp: i64,
-    pub sequence_count: u64,  // monotonically increasing PoT count
+    pub sequence_count: u64, // monotonically increasing PoT count
 }
 
 /// Simplified VDF using iterative SHA-256 squaring to simulate modular exponentiation.
@@ -263,7 +267,7 @@ pub struct HashDisplay(pub String);
 impl fmt::Display for HashDisplay {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.0.len() > 16 {
-            write!(f, "{}...{}", &self.0[..8], &self.0[self.0.len()-8..])
+            write!(f, "{}...{}", &self.0[..8], &self.0[self.0.len() - 8..])
         } else {
             write!(f, "{}", self.0)
         }
@@ -280,6 +284,8 @@ pub fn generate_uuid() -> String {
         u16::from_be_bytes([bytes[4], bytes[5]]),
         u16::from_be_bytes([bytes[6], bytes[7]]) & 0x0fff,
         (u16::from_be_bytes([bytes[8], bytes[9]]) & 0x3fff) | 0x8000,
-        bytes[10..16].iter().fold(0u64, |acc, &b| (acc << 8) | b as u64),
+        bytes[10..16]
+            .iter()
+            .fold(0u64, |acc, &b| (acc << 8) | b as u64),
     )
 }
