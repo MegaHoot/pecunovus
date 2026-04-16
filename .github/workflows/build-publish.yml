@@ -1,0 +1,244 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2017-2026 Pecu Novus Network / MegaHoot Technologies
+#
+# CI/CD Pipeline — Build, Test, and Publish to GitHub Container Registry (GHCR)
+#
+# Triggers:
+#   push to main         → build + test + publish :latest + :<sha>
+#   push tag v*.*.*      → build + test + publish :v3.0.0 + :3 + :3.0 + :latest
+#   pull_request to main → build + test only (no publish)
+#   manual dispatch      → build + test + publish
+
+name: Build & Publish to GHCR
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Least-privilege permissions — only grant what each job actually needs
+permissions:
+  contents: read
+  packages: write       # needed to push to GHCR
+  security-events: write  # needed for SARIF upload (Trivy scan)
+
+env:
+  REGISTRY: ghcr.io
+  # ghcr.io/megahoot/pecunovus
+  IMAGE_NAME: ${{ github.repository }}
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  # ─── Job 1: Lint & Test ─────────────────────────────────────────────────────
+  test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Rust stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      # Cache ~/.cargo/registry and target/ between runs
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Clippy (deny warnings)
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Run all tests (88 expected)
+        run: cargo test --verbose 2>&1 | tee test-results.txt
+
+      - name: Verify test count
+        run: |
+          PASSED=$(grep -oP '\d+ passed' test-results.txt | grep -oP '\d+' | awk '{s+=$1} END {print s}')
+          echo "Tests passed: $PASSED"
+          if [ "$PASSED" -lt 88 ]; then
+            echo "ERROR: Expected at least 88 tests to pass, got $PASSED"
+            exit 1
+          fi
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results.txt
+
+  # ─── Job 2: Build & Push Docker image to GHCR ───────────────────────────────
+  publish:
+    name: Build & Push to GHCR
+    runs-on: ubuntu-latest
+    needs: test
+    # Only publish on push to main/tags or manual dispatch — not on PRs
+    if: github.event_name != 'pull_request'
+
+    outputs:
+      image-digest: ${{ steps.build.outputs.digest }}
+      image-tags: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # Set up QEMU for multi-platform builds (linux/amd64 + linux/arm64)
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # Buildx gives us multi-platform support and layer caching
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Generate image tags and labels from Git context:
+      #   push to main  → :latest, :main, :<sha7>
+      #   push v3.0.1   → :v3.0.1, :3.0, :3, :latest
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
+          labels: |
+            org.opencontainers.image.title=Pecu Novus Node
+            org.opencontainers.image.description=Pecu Novus Blockchain — Rust Implementation (Pecu 3.0 Themis)
+            org.opencontainers.image.vendor=MegaHoot Technologies
+            org.opencontainers.image.licenses=Apache-2.0
+            org.opencontainers.image.url=https://pecunovus.com
+            org.opencontainers.image.documentation=https://github.com/MegaHoot/pecunovus/blob/main/README.md
+
+      # Build and push — Buildx layer cache stored in GitHub Actions cache
+      - name: Build and push multi-platform image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # Provenance attestation (SLSA level 1)
+          provenance: true
+          # SBOM generation for supply chain security
+          sbom: true
+
+      - name: Print published image info
+        run: |
+          echo "Image digest : ${{ steps.build.outputs.digest }}"
+          echo "Image tags   :"
+          echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' | sed 's/^/  /'
+
+  # ─── Job 3: Security scan with Trivy ────────────────────────────────────────
+  scan:
+    name: Security Scan (Trivy)
+    runs-on: ubuntu-latest
+    needs: publish
+    if: github.event_name != 'pull_request'
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Scan the published image for OS and dependency vulnerabilities
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          exit-code: "0"   # don't fail the build — report only
+
+      # Upload SARIF to GitHub Security tab
+      - name: Upload Trivy scan results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif
+
+  # ─── Job 4: Create GitHub Release on semver tags ────────────────────────────
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [publish, scan]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history for changelog generation
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
+      # Pull the release notes for this version from CHANGELOG.md
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          # Extract section between this version heading and the next
+          awk "/^## \[${VERSION#v}\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md \
+            > release-notes.md
+          echo "Release notes extracted:"
+          cat release-notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.VERSION }}
+          name: "Pecu Novus ${{ steps.version.outputs.VERSION }} — Pecu 3.0 Themis"
+          body_path: release-notes.md
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.VERSION, '-') }}
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
