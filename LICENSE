@@ -1,187 +1,325 @@
-                                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/
+# The Pecu Novus Network
 
-   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+**Original Whitepaper**
 
-   1. Definitions.
+> **Authors:** Vinci Gauss, Sri Ram
+> **Date:** January 5, 2018
 
-      "License" shall mean the terms and conditions for use, reproduction,
-      and distribution as defined by Sections 1 through 9 of this document.
+---
 
-      "Licensor" shall mean the copyright owner or entity authorized by
-      the copyright owner that is granting the License.
+## Table of Contents
 
-      "Legal Entity" shall mean the union of the acting entity and all
-      other entities that control, are controlled by, or are under common
-      control with that entity. For the purposes of this definition,
-      "control" means (i) the power, direct or indirect, to cause the
-      direction or management of such entity, whether by contract or
-      otherwise, or (ii) ownership of fifty percent (50%) or more of the
-      outstanding shares, or (iii) beneficial ownership of such entity.
+- [Introduction](#introduction)
+- [Pecu Novus — The Digital Asset for the Digital Age](#pecu-novus--the-digital-asset-for-the-digital-age)
+  - [I. Why Was Pecu Novus Developed?](#i-why-was-pecu-novus-developed)
+  - [II. What's In a Name?](#ii-whats-in-a-name)
+  - [III. Digital Asset Fund and Funding](#iii-digital-asset-fund-and-funding)
+  - [IV. Initial Coin Offering "ICO"](#iv-initial-coin-offering-ico)
+  - [V. Coin Supply](#v-coin-supply)
+  - [VI. Is Pecu Novus Seen as an Investment?](#vi-is-pecu-novus-seen-as-an-investment)
+  - [VII. Key Points of the Pecu Novus Network](#vii-key-points-of-the-pecu-novus-network)
+  - [VIII. Pecu Novus 101](#viii-pecu-novus-101)
+  - [IX. The Blockchain](#ix-the-blockchain)
+  - [X. The Development Team](#x-the-development-team)
+  - [XI. The Advisors and Asset Manager](#xi-the-advisors-and-asset-manager)
+  - [XII. Definitions / Technical Information](#xii-definitions--technical-information)
+  - [XIII. Brief History of Cryptocurrency](#xiii-brief-history-of-cryptocurrency)
+- [Risk Factors Associated with Owning Cryptocurrencies](#risk-factors-associated-with-owning-cryptocurrencies)
+- [Conclusion](#conclusion)
+- [References](#references)
 
-      "You" (or "Your") shall mean an individual or Legal Entity
-      exercising permissions granted by this License.
+---
 
-      "Source" form shall mean the preferred form for making modifications,
-      including but not limited to software source code, documentation
-      source, and configuration files.
+## Introduction
 
-      "Object" form shall mean any form resulting from mechanical
-      transformation or translation of a Source form, including but
-      not limited to compiled object code, generated documentation,
-      and conversions to other media types.
+Traditional banking methods are outdated for a global economy, they carry with them high transaction fees, limited privacy and delayed fund transfers due to multiple layers of internal and external protocols that need to be met. In short too many people are needed to facilitate both domestic and global transactions. These current issues that negatively impact all businesses globally have manifested the need for alternative solutions.
 
-      "Work" shall mean the work of authorship made available under
-      the License, as indicated by a copyright notice that is included in
-      or attached to the work (an example is provided in the Appendix below).
+What has evolved over the past two decades are digital payment systems that are layered on blockchain technology and based on cryptography that creates transparent, immediate, irreversible and immutable transactions. This allows two parties to engage in a transaction that can be concluded in minutes or seconds as opposed to hours or days. The technology has advanced over the years and global markets have begun to widely embrace them as an alternative to the current outdated systems available. The integration of digital asset payment systems and traditional banking methods are inevitable, this evolution will lead to faster transactions, limited third party involvement, increased transparency, wider acceptance and increased regulation.
 
-      "Derivative Works" shall mean any work, whether in Source or Object
-      form, that is based on (or derived from) the Work and for which the
-      editorial revisions, annotations, elaborations, or other modifications
-      represent, as a whole, an original work of authorship. For the purposes
-      of this License, Derivative Works shall not include works that remain
-      separable from, or merely link (or bind by name) to the interfaces of,
-      the Work and Derivative Works thereof.
+There are both decentralized and centralized networks that exist today. Decentralized networks offer very high security due to the enormous amount of computing power needed for mining in order to secure the network. They also reveal more information publicly about the users of the network which can make it less private. Centralized networks can also offer very high security due to the level of cryptography used to secure the network. Networks that utilize public ledgers that make transactions transparent and immutable but also keeping sensitive data secure are most desirable. Centralized networks have evolved over the past few years, with the inclusion of proprietary security protocols, providing users with publicly viewable immutable ledgers, increased features and functionality as well as being prepared for future financial regulation, this evolution is sure to continue for the benefit of the users of the network.
 
-      "Contribution" shall mean, as submitted to the Licensor for inclusion
-      in the Work by the copyright owner or by an individual or Legal Entity
-      authorized to submit on behalf of the copyright owner. For the purposes
-      of this definition, "submitted" means any form of electronic, verbal,
-      or written communication sent to the Licensor or its representatives,
-      including but not limited to communication on electronic mailing lists,
-      source code control systems, and issue tracking systems that are managed
-      by, or on behalf of, the Licensor for the purpose of discussing and
-      improving the Work, but excluding communication that is conspicuously
-      marked or otherwise designated in writing by the copyright owner as
-      "Not a Contribution."
+---
 
-      "Contributor" shall mean Licensor and any Legal Entity on behalf of
-      whom a Contribution has been received by the Licensor and subsequently
-      incorporated within the Work.
+## Pecu Novus — The Digital Asset for the Digital Age
 
-   2. Grant of Copyright License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      copyright license to reproduce, prepare Derivative Works of,
-      publicly display, publicly perform, sublicense, and distribute the
-      Work and such Derivative Works in Source or Object form.
+Pecu Novus is a blockchain technology powered network incorporating a digital asset, which we refer to as **PECU**, that enables businesses and individuals on the network to conduct zero cost coin based transactions globally. It's a safe, secure and private method to conduct confidential transactions with confidence. The Pecu Novus network features a **Secure Escrow System**, **Smart Contract Enabled**, **Internal Messaging**, **Dual Confirmation**, **Transparent Transactions** and more in development which increases user control, safety and privacy in a connected world. The network features a larger and scalable block size which provides virtually instantaneous transaction confirmations, better storage efficiency and functionality for users of the network.
 
-   3. Grant of Patent License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      (except as stated in this section) patent license to make, have made,
-      use, offer to sell, sell, import, and otherwise transfer the Work,
-      where such license applies only to those patent claims licensable
-      by such Contributor that are necessarily infringed by their
-      Contribution(s) alone or by combination of their Contribution(s)
-      with the Work to which such Contribution(s) was submitted. If You
-      institute patent litigation against any entity (including a cross-claim
-      or counterclaim in a lawsuit) alleging that the Work or a Contribution
-      incorporated within the Work constitutes direct or contributory patent
-      infringement, then any patent licenses granted to You under this
-      License for that Work shall terminate as of the date such litigation
-      is filed.
+---
 
-   4. Redistribution. You may reproduce and distribute copies of the Work
-      or Derivative Works thereof in any medium, with or without
-      modifications, and in Source or Object form, provided that You meet
-      the following conditions:
+### I. Why Was Pecu Novus Developed?
 
-      (a) You must give any other recipients of the Work or Derivative Works
-          a copy of this License; and
+With traditional banking methods being outdated and businesses in need of an alternative means of performing various transactions in a cost effective, timely and secure manner, the birth of the Pecu Novus on **January 15, 2017** was inevitable. Pecu Novus was developed primarily for business use, giving businesses globally a platform where they can perform transactions in the most efficient, secure and cost effective way. There are currently a set of business tools available for use with more features in development for the Pecu Novus network that will allow businesses to get the most out of using the Pecu Novus network.
 
-      (b) You must cause any modified files to carry prominent notices
-          stating that You changed the files; and
+Although Pecu Novus was developed primarily for business use the network is not limited to businesses. Most of the functions are also available for individual use with limited restrictions. The goal of the network was to allow any business or individual, anywhere in the world to have access to a powerful and secure transactional tool. Further development is needed in order to bring the network to reach its potential and developing the right partnership to assist in enhancing the network as well as continuing development to surpass the goals for tomorrow has been paramount. This is something that we see occurring within the next year.
 
-      (c) You must retain, in the Source form of any Derivative Works that
-          You distribute, all copyright, patent, trademark, and attribution
-          notices from the Source form of the Work, excluding those notices
-          that do not pertain to any part of the Derivative Works; and
+---
 
-      (d) If the Work includes a "NOTICE" text file, You must include a
-          readable copy of the attribution notices contained within such
-          NOTICE file, in at least one of the following places: within a
-          Source form or documentation provided with the Derivative Works;
-          or, within a display generated by the Derivative Works, if and
-          wherever such third-party notices normally appear. The contents
-          of the NOTICE file are for informational purposes only and do
-          not modify the License. You may add Your own attribution notices
-          within Derivative Works that You distribute, alongside or as an
-          addendum to the NOTICE text from the Work, provided that such
-          additional attribution notices cannot be construed as modifying
-          the License.
+### II. What's In a Name?
 
-      You may add Your own license statement for Your modifications and
-      may provide additional grant of rights to use, reproduce, modify,
-      and distribute such modifications, for Your modifications as a whole.
+The name Pecu Novus was chosen for a very specific reason, for what it stood for and how it symbolized the network to the world. In Latin **Pecunia** means **"MONEY"** and **Novus** means **"NEW"**, so in short **Pecu Novus = NEW MONEY**.
 
-   5. Submission of Contributions. Unless You explicitly state otherwise,
-      any Contribution intentionally submitted for inclusion in the Work
-      by You to the Licensor shall be under the terms and conditions of
-      this License, without any additional terms or conditions.
-      Notwithstanding the above, nothing herein shall supersede or modify
-      the terms of any separate license agreement you may have executed
-      with Licensor regarding such Contributions.
+---
 
-   6. Trademarks. This License does not grant permission to use the trade
-      names, trademarks, service marks, or product names of the Licensor,
-      except as required for reasonable and customary use in describing the
-      origin of the Work and reproducing the content of the NOTICE file.
+### III. Digital Asset Fund and Funding
 
-   7. Disclaimer of Warranty. Unless required by applicable law or agreed
-      to in writing, Licensor provides the Work (and each Contributor
-      provides its Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES
-      OR CONDITIONS OF ANY KIND, either express or implied, including,
-      without limitation, any warranties or conditions of TITLE,
-      NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR
-      PURPOSE. You are solely responsible for determining the
-      appropriateness of using or reproducing the Work and assume any
-      risks associated with Your exercise of permissions under this License.
+In the future a Digital Asset Fund will be created alongside a viable and equal financial partner in order to hold any and all assets related to the Pecu Novus network, we will simply call this the partnership in this paper for clarity purposes. The asset fund would be best described as a **"Hybrid Fund"**, whereby, the fund's investment strategy is to invest over a wide variety of investment classes, including but not limited to:
 
-   8. Limitation of Liability. In no event and under no legal theory,
-      whether in tort (including negligence), contract, or otherwise,
-      unless required by applicable law (such as deliberate and grossly
-      negligent acts) or agreed to in writing, shall any Contributor be
-      liable to You for damages, including any direct, indirect, special,
-      incidental, or exemplary damages of any character arising as a result
-      of this License or out of the use or inability to use the Work
-      (including but not limited to damages for loss of goodwill, work
-      stoppage, computer failure or malfunction, or all other commercial
-      damages or losses), even if such Contributor has been advised of the
-      possibility of such damages.
+- Equity in both public and privately held companies
+- Debt
+- Real estate
+- Other digital assets
+- Precious metals
+- Derivatives and more
 
-   9. Accepting Warranty or Additional Liability. While redistributing the
-      Work or Derivative Works thereof, You may choose to offer, and charge
-      a fee for, acceptance of support, warranty, indemnity, or other
-      liability obligations and/or rights consistent with this License.
-      However, in accepting such obligations, You may act only on Your own
-      behalf and on Your sole responsibility, not on behalf of any other
-      Contributor, and only if You agree to indemnify, defend, and hold each
-      Contributor harmless for any liability incurred by, or claims asserted
-      against, such Contributor by reason of your accepting any such
-      warranty or additional liability.
+The main goal of the fund is growth, increasing the value in the assets invested in for the benefit of the entire network.
 
-   END OF TERMS AND CONDITIONS
+---
 
-   APPENDIX: How to apply the Apache License to your work.
+### IV. Initial Coin Offering "ICO"
 
-      To apply the Apache License to your work, attach the following
-      boilerplate notice, with the fields enclosed by brackets "[]"
-      replaced with your own identifying information. (Don't include
-      the brackets!) The text should be enclosed in the appropriate
-      comment syntax for the file format in question.
+Pecu Novus was **never an Initial Coin Offering "ICO" by design**. There have been a vast majority of such project offerings being marketed to the general public that would not have the actual system built until the offering is completed, so they are basically detailed ideas at first. In the future it is certain that true blockchain based systems will house many other projects that wish to issue a cryptocurrency for their projects, these foundation blockchain systems will spark a wave in the cryptocurrency arena and provide ease of use for parties that are not high level engineers.
 
-   Copyright 2017-2026 Pecu Novus Network / MegaHoot Technologies
+The Pecu Novus network needed to be built in order for the benefits to be seen, not on paper but in reality, this is why this outline of what we have done wasn't created until we did just that. There were investments made into our project that made it possible to allow this to occur for the benefit of entire network and its users, these investments were derived from project leads, family and a friendly financial firm. The integrity of the Pecu Novus network is paramount and will remain that way as it has been since inception.
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+---
 
-       http://www.apache.org/licenses/LICENSE-2.0
+### V. Coin Supply
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+The total supply of Pecu Novus coins were initially set at 100 million coins but upon further discussion and for scalability reasons the total supply of coins was set to **1 billion coins**. A plan of action has been set forth that will allow the network to continue to scale, innovate and expand its reach; utilization of PECU Coins itself will allow this.
+
+**Supply Breakdown:**
+
+| Allocation | Maximum Supply | Purpose |
+|---|---|---|
+| **Investment Supply** | 200 million PECU | Solely for investment purposes that will benefit the network and the partnership. Enhances viability and allows for continued growth and expansion. |
+| **Minable Supply** | 100 million PECU | Maximum allowed to be mined openly. Mining uses a fair amount of computing power and energy; until a more energy efficient path is found, mining will be dormant. |
+| **Total Maximum Supply** | 1 billion PECU | Additional issuance of PECU Coins will come from mining once it is unlocked. A solution is being sought with partners so that the true value of the network is achieved. |
+
+---
+
+### VI. Is Pecu Novus Seen as an Investment?
+
+As with any store of value, whether it be digital or physical, the possibility of it accruing in value over time is evident. The key word is **"VALUE"** and a few points of value are evident with Pecu Novus:
+
+- Having a **capped maximum investment supply of 200 million PECU Coins** gives it additional value due to the true growth potential beyond the network.
+- The increased usage by businesses for multilayered transactions utilizing the proprietary escrow system and the increased usage by individuals globally will add to that value.
+- As the underlying investments accrue in value so does the strength of the entire network.
+
+So like gold, silver, certain stocks or bonds, holding digital assets such as Pecu Novus have proven to be growth situations.
+
+> **Disclaimer:** Alternative assets such as Pecu Novus are still very young and the space itself is a fragmented economy and there can be extreme volatility with many of these alternative assets, so as a safety precaution it's never recommended to hold all your savings in any digital assets at this point. See them as a high risk alternative asset that will mature over time.
+
+---
+
+### VII. Key Points of the Pecu Novus Network
+
+- Maximum supply is limited to **1 billion coins**
+- Total investment supply maximum is **200 million coins**
+- A coin is divisible down to **15 decimal places**
+- Mining is temporarily dormant until a viable energy efficient alternative is developed for the network
+- A variety of investments could accrue in value that directly benefits and strengthens the overall growth prospect of the entire network — these assets over time may include but are not limited to: private company investments, precious metals, altcoins, real estate
+- The investments will be managed by an experienced management team which the network will be in partnership with
+- The Pecu Novus digital wallet is easily managed and multi-functional; offline cold storage of coins will be added soon
+- Timed escrow capability with an automatic dated release for various business transactions
+- **1 megabyte blocksize** limit that is expandable as the network grows
+- **Dual confirmation** feature for acceptance of transactions
+- Pecu Novus was **never** an Initial Coin Offering by design
+- **SHA-512 bit encryption** and proprietary blockchain enabled security protocols are used for the highest level of security on the network
+- Advanced blockchain technology
+- The network allows for additional text for legalese, links or other information to be included within a transaction and permanently incorporated into a block; in the near future transactional documents and other digital items will be able to be scanned for a transaction and connected to that block
+
+---
+
+### VIII. Pecu Novus 101
+
+Pecu Novus sees itself as a major disruptor in the alternative asset world. The network was created in order to make it as simple as possible for anyone to use no matter their level of technical knowledge. Pecu Novus is not just for speculators and the tech savvy, but it's for average individuals and businesses conducting everyday transactions. This is the key of the network, having it simple enough to understand and making it not for some but for everyone.
+
+**How to Use the Network:**
+
+1. New users simply set up a digital wallet on **PecuNovus.org** via a computer or mobile phone — this digital wallet will store your PECU coins, similar to an online bank account.
+2. Once the digital wallet is created a **"Pecu Address" (Public Key)** is automatically generated. These public keys are what is a permanent part of the public ledger, this is why it's a good idea to change your public key after each transaction for security reasons.
+3. In the **"Send Coins"** area, place the amount to be sent.
+4. Paste the **"Pecu Address" (Public Key)** in the appropriate slot.
+5. In the **"Note"** section you can add a description for the transaction if you so choose — this becomes a permanent part of the transaction on the public ledger (blockchain).
+6. Press **"SEND"** and the PECU Coins will arrive to the receiver within seconds.
+
+> It's that simple.
+
+---
+
+### IX. The Blockchain
+
+A blockchain is a public ledger, a true public account of activity; this is the foundation of Pecu Novus. Each and every transaction is included in the public ledger for transparency and security. All transactions are permanent within the blockchain and can never be altered, as they are completed they form a chronological order of transactions enforced by cryptography. The Pecu Novus digital wallet which holds the PECU coins calculates your balances as you use it and as the price adjusts. You have the ability to print an account statement of your Pecu Novus account for your records whenever needed.
+
+---
+
+### X. The Development Team
+
+The development team behind the Pecu Novus Network consists of highly skilled engineers who are focused on advanced cryptography alongside the creators of this paper. The team has a vision of having a small impact on the world of digital finance through the network. In the coming year it is planned to partner with a team that will be able to assist in the growth of the network by assuming the responsibilities of the future development and maintenance of the network.
+
+---
+
+### XI. The Advisors and Asset Manager
+
+The current plan is to partner with a financial organization to be responsible for digital asset investments and assist with guidance for continued growth of the network.
+
+---
+
+### XII. Definitions / Technical Information
+
+#### Definitions
+
+**Public Key:**
+Unique key that is attached to each account. It's used to deliver any transaction / communications directly to that account. Users are able to refresh their Public Key and receive a new one (automatically generated by the network). This feature provides additional security and privacy for users.
+
+**Private Key:**
+A unique permanent key that is attached to each account. Private keys should not be shared with anyone except the account owner. Private Keys will never be shown on any transactions view layer; it will only be used to execute and finalize a specific transaction / communication.
+
+**Escrow:**
+Contract-based transaction. Coins are locked for a scheduled future date and will be executed or released automatically when the contract terms are fulfilled or the date is reached.
+
+**Transaction Note:**
+Notes for a specific transaction which will be shown publicly.
+
+**Private Transaction Note:**
+Notes for a specific transaction which will only be viewable by the sender and receiver.
+
+**SHA-512:**
+SHA-512 is a cryptographic hash function that when applied to the provided input results in a 128-digit hexadecimal number that is highly unlikely to match the value produced for a different input. SHA-512 is a variant of the SHA-2 set of cryptographic hash functions designed by the United States National Security Agency (NSA).
+
+#### Technical Details
+
+**Hash / Key Generation Method:**
+
+- Customized Algorithm — generating key with a random length of numbers and letters, between 64 to 128, a combination of String, Integers and timestamp
+- **SHA-512** — The SHA-2 family is built from a block cipher in a Davies-Meyer construction, where the message is considered the key and the current hash value the plain text. The 2nd set of constants in the SHA-512 round function is `14`, `18`, and `41`. Rotations are also performed in the message expansion (key schedule), and are also important. The block cipher at the center of the compression function must behave in a secure manner, and the rotational constants were chosen in such a way that the block cipher is resistant to standard cryptographic attacks. The round count was then fixed to meet the security requirement of the hash digest, plus some wiggle room for new attacks.
+
+**Public Key:**
+
+Random lengths of numbers and letters, between 64 to 128, a combination of Strings,
+Integers and a time stamp.
+
+**Private Key — Combination of:**
+
+Combination of:
+
+SHA512 Hashed information.
+Mixed with Random length of numbers and letters, between 60 to 102, a combination of Strings and Integers.
+
+**Block Address:**
+
+- Communication / Transaction Information's Hashed with SHA512
+
+**Block Time:**
+
+- 2–4 Hours
+- May change in the future
+
+---
+
+#### Escrow — Technical Overview
+
+The transactions that occur with digital assets such as Bitcoin, Ethereum, Litecoin, Pecu Novus and others are final — there are no reversals of a transaction. When the sender initiates the transaction and it's completed then the receiver owns those coins even in the event of an error on the sender's part. The only way that coins in that case would return to the sender is if the receiver would send them back.
+
+We saw a major flaw in this system and considered it a high risk situation when performing any transaction, using a digital asset to purchase goods or services. This is why we developed a **comprehensive escrow system** on the Pecu Novus network to avoid the pitfalls that may come from initiating a transaction on the network.
+
+The escrow feature was developed to protect both the sender and receiver of PECU Coins. So as opposed to just sending coins free and clear for a transaction, no matter what the size, a user can send them with a **dated release option** on the Pecu Novus network.
+
+**Example Use Case:**
+If the PECU coins were being used for a real estate transaction or an import/export transaction, the coins and highlights of the contract would be included when initiating the transaction. When the transaction is completed on the designated date, the coins are automatically released. The sender also has the option to release the coins earlier than the dated release or, if the transaction doesn't go through, the transaction can be canceled for cause.
+
+**Escrow Security:**
+
+Random length of numbers and letters, between 64 to 128, a combination of Strings, Integers and a timestamp
+
+
+---
+
+#### Communication / Connection Protocol
+
+- **HTTPS**
+- **OAuth 2.0**
+- **Private Session and Token** (custom algorithm)
+
+#### API
+
+**Required Information:**
+
+| Parameter | Description |
+|---|---|
+| Token | Authentication token |
+| Host | Host address |
+| IP Address | Client IP address |
+| Type | Module request type |
+| Other Parameters | Depends on module type |
+
+**Language & Method:**
+
+- **PHP** — cURL
+- **JS** — AJAX
+
+> *The technical information in this document is for the general public and any information contained herein features a simplified version of the running flow, process code and implementation, which is proprietary to the Pecu Novus Network. Releasing such information could lead to a breach in security protocols which are the backbone of the network.*
+
+---
+
+### XIII. Brief History of Cryptocurrency
+
+In 1998, Wei Dai published a description of **"b-money"**, an anonymous, distributed electronic cash system. Shortly thereafter, Nick Szabo created **"bit gold"**. Like Bitcoin and other cryptocurrencies that would follow it, bit gold was an electronic currency system which required users to complete a proof of work function with solutions being cryptographically put together and published. A currency system based on a reusable proof of work was later created by **Hal Finney** who followed the work of Dai and Szabo.
+
+The first decentralized cryptocurrency, **Bitcoin**, was created in 2009 by pseudonymous developer **Satoshi Nakamoto**. It used SHA-256, a cryptographic hash function, as its proof-of-work scheme. In April 2011, **Namecoin** was created as an attempt at forming a decentralized DNS, which would make internet censorship very difficult. Soon after, in October 2011, **Litecoin** was released. It was the first successful cryptocurrency to use scrypt as its hash function instead of SHA-256. Another notable cryptocurrency, **Peercoin** was the first to use a proof-of-work/proof-of-stake hybrid. **IOTA** was the first cryptocurrency not based on a blockchain, and instead uses the Tangle. Many other cryptocurrencies have been created though few have been successful, as they have brought little in the way of technical innovation.
+
+The legal status of cryptocurrencies varies substantially from country to country and is still undefined or changing in many of them. While some countries have explicitly allowed their use and trade, others have banned or restricted it.
+
+> On March 25, 2014, the United States Internal Revenue Service (IRS) ruled that bitcoin will be treated as property for tax purposes as opposed to currency. This means bitcoin will be subject to capital gains tax. One benefit of this ruling is that it clarifies the legality of bitcoin.
+
+In a paper published by researchers from Oxford and Warwick, it was shown that bitcoin has some characteristics more like the precious metals market than traditional currencies, hence in agreement with the IRS decision even if based on different reasons.
+
+---
+
+## Risk Factors Associated with Owning Cryptocurrencies
+
+1. **Loss or destruction of the private key** — Cryptocurrencies are stored in a digital wallet and are controllable only by the possessor of both the public key and the private key relating to the digital wallet in which the cryptocurrencies are held, both of which are unique. If the private key is lost, destroyed or otherwise compromised, an investor may be unable to access the cryptocurrency held in the related digital wallet which will essentially be lost. If the private key is acquired by a third party, then this third party may be able to gain access to the cryptocurrency.
+
+2. **Risks associated with peer-to-peer transactions** — Digital currencies can be traded on numerous online platforms, through third party service providers and as peer-to-peer transactions between parties. Many marketplaces simply bring together counterparties without providing any clearing or intermediary services and without being regulated. In such a case, all risks (such as double-selling) remain between the parties directly involved in the transaction.
+
+3. **Other risks related to trading platforms and exchanges** — Digital currency trading platforms, largely unregulated and providing only limited transparency with respect to their operations, have come under increasing scrutiny due to cases of fraud, business failure or security breaches, where investors could not be compensated for losses suffered.
+
+4. **Loss of confidence in digital currencies** — Digital currencies are part of a new and rapidly evolving "digital assets industry", which itself is subject to a high degree of uncertainty. Most cryptocurrencies are not backed by a central bank, a national or international organization, or assets or other credit, and their value is strictly determined by the value that market participants place on them through their transactions, which means that loss of confidence may bring about a collapse of trading activities and an abrupt drop in value.
+
+5. **Regulations preventing or restricting trading of digital currencies** — There are significant inconsistencies among various regulators with respect to the legal status of digital currencies. Regulators are also concerned that bitcoin and other cryptocurrencies may be used by criminals and terrorist organizations. In the future, certain countries may restrict the right to acquire, own, hold, sell or use digital currencies.
+
+6. **Currency-conversion risks** — Policies or interruptions in the deposit or withdrawal of fiat currency into or out of the trading platforms may impact the ability of certain investors to convert. For example, when two of the largest trading platforms in China stopped margin lending and withdrawals in February 2017, this immediately triggered a decrease in pricing and trading volume.
+
+7. **Taxation of digital currencies** — For investors in cryptocurrencies, it should be noted that there is substantial uncertainty with respect to the tax treatment of an investment in digital currencies. Bitcoins and other cryptocurrencies may be considered assets in certain jurisdictions and currency in others. Sales or value-added taxes may be imposed on purchases and sales of digital currencies. Investors, based on their home jurisdiction, may require specific tax advice on a regular basis.
+
+8. **Slow-down of network** — For bitcoins, mining is the process by which bitcoins are created and transactions verified. If the rewards for solving blocks and transaction fees are not sufficiently high, or if a high volume of transactions occur at the same time, the blockchain may experience a slow-down. A slow-down is also possible for other cryptocurrencies, if the number of transactions on the blockchain is very high.
+
+9. **Dilution due to competition or "fork" in the Blockchain** — Cryptocurrencies are based in protocols which govern the peer-to-peer interactions between various users. Dissent between users as to protocols to be used may result in a "fork", opening two separate networks. For example, in 2016, Ethereum experienced a permanent fork in its blockchain that resulted in two versions of its digital currency, Ethereum (ETH) and Ethereum Classic (ETC), which trade very differently.
+
+---
+
+## Conclusion
+
+Alternative assets are exploding at an exponential rate, there are over 1,500 coin and token networks that exist today, some viable and some not. There is no question that the alternative asset arena is cluttered with cryptocurrency platforms, so being different is a key component of the Pecu Novus Network. As a relatively newly introduced digital asset that is simple to use with innovative and functional features for global transactions, we feel that the network will appeal to the masses — not just for businesses but for individuals from all walks of life worldwide. The unique functions on the Pecu Novus Network along with inclusion of investments using the PECU Coin are unlike that of existing alternative assets such as Bitcoin, Ethereum or Litecoin.
+
+**Pecu Novus' appeal will be to:**
+
+- Long term asset holders looking for appreciation
+- Cryptocurrency enthusiasts
+- Small, medium and large businesses looking for alternative cost effective and secure methods of transacting business
+
+---
+
+## References
+
+- loebsmith.com
+- wikipedia.org
+- irs.gov
+- venturebeat.com
+- docs.python.org
+
+---
+
+> *© 2018 Pecu Novus Network. All rights reserved.*
+> *Authors: Vinci Gauss, Sri Ram*
+
