@@ -1,0 +1,82 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2017-2026 Pecu Novus Network / MegaHoot Technologies
+#
+# docker-compose.yml
+# Local development: single node + optional 3-node devnet
+#
+# Usage:
+#   Single node:   docker compose up node
+#   3-node devnet: docker compose --profile devnet up
+#   Pull from GHCR: IMAGE=ghcr.io/megahoot/pecunovus:latest docker compose up
+
+version: "3.9"
+
+x-node-base: &node-base
+  image: ${IMAGE:-ghcr.io/megahoot/pecunovus:latest}
+  restart: unless-stopped
+  environment:
+    RUST_LOG: ${RUST_LOG:-info}
+  volumes:
+    - type: tmpfs
+      target: /data/pecu
+  healthcheck:
+    test:
+      - CMD
+      - sh
+      - -c
+      - |
+        curl -sf -X POST http://localhost:$$PECU_RPC_PORT \
+          -H 'Content-Type: application/json' \
+          -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+          | grep -q '"result"'
+    interval: 15s
+    timeout: 5s
+    retries: 5
+    start_period: 10s
+
+services:
+  # ── Primary node (always starts) ──────────────────────────────────────────
+  node:
+    <<: *node-base
+    container_name: pecu-node
+    environment:
+      RUST_LOG: ${RUST_LOG:-info}
+      PECU_RPC_PORT: 8545
+    ports:
+      - "${RPC_PORT:-8545}:8545"
+    volumes:
+      - pecu-data:/data/pecu
+    labels:
+      com.pecunovus.role: "primary"
+      com.pecunovus.network: "devnet"
+
+  # ── Devnet: 3-node cluster (docker compose --profile devnet up) ────────────
+  node-2:
+    <<: *node-base
+    container_name: pecu-node-2
+    profiles: [devnet]
+    environment:
+      RUST_LOG: ${RUST_LOG:-info}
+      PECU_RPC_PORT: 8546
+    ports:
+      - "8546:8546"
+    labels:
+      com.pecunovus.role: "validator-2"
+      com.pecunovus.network: "devnet"
+
+  node-3:
+    <<: *node-base
+    container_name: pecu-node-3
+    profiles: [devnet]
+    environment:
+      RUST_LOG: ${RUST_LOG:-info}
+      PECU_RPC_PORT: 8547
+    ports:
+      - "8547:8547"
+    labels:
+      com.pecunovus.role: "validator-3"
+      com.pecunovus.network: "devnet"
+
+volumes:
+  pecu-data:
+    name: pecu-novus-data
