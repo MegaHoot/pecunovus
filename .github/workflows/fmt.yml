@@ -1,0 +1,100 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2017-2026 Pecu Novus Network / MegaHoot Technologies
+#
+# Auto-formatter workflow
+# Runs cargo fmt on every PR, commits the result back to the PR branch.
+# This means contributors never need to run fmt locally — the bot handles it.
+
+name: Auto Format
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - gh-setup
+
+# Need write access to push the fmt commit back to the PR branch
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  fmt:
+    name: cargo fmt
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          # Check out the actual PR head branch (not the merge ref)
+          # so we can push back to it
+          ref: ${{ github.head_ref }}
+          # Use a token that can push — GITHUB_TOKEN works for same-repo PRs
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Install Rust stable with rustfmt
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-fmt-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-fmt-
+
+      - name: Run cargo fmt
+        run: cargo fmt --all
+
+      - name: Check for formatting changes
+        id: diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No formatting changes needed."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Formatting changes detected:"
+            git diff --stat
+          fi
+
+      - name: Commit and push fmt fixes
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "style: apply cargo fmt [skip ci]"
+          git push origin HEAD:${{ github.head_ref }}
+
+      - name: Leave PR comment if fmt was applied
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### ✅ Auto-formatted\n\n\`cargo fmt\` found formatting issues and committed the fixes automatically.\n\nThe latest commit on this PR includes the formatted code — no action needed from you.`
+            })
+
+      - name: Leave PR comment if already clean
+        if: steps.diff.outputs.changed == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### ✅ Formatting clean\n\n\`cargo fmt\` found no issues — code is already formatted correctly.`
+            })
