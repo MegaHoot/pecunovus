@@ -24,10 +24,9 @@
 // "Tokens exist as a single instance on the Pecu Novus mainnet."
 
 use crate::crypto;
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use chrono::Utc;
-
 
 // ─── Token Standard Enum ─────────────────────────────────────────────────────
 
@@ -36,21 +35,21 @@ pub enum TokenStandard {
     PNP16,
     ERC20,
     ERC1400,
-    NFT,    // Non-Fungible Token
+    NFT, // Non-Fungible Token
 }
 
 // ─── Token Asset Class (PNP16) ────────────────────────────────────────────────
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum AssetClass {
-    FinancialAsset,          // Company stake/ownership
-    GamingAsset,             // In-game rewards, earned points, character skills
-    PhysicalCommodity,       // Gold, silver, oil, agricultural products
-    FractionalRealEstate,    // Tokenized property ownership
-    IntellectualProperty,    // Music, film, software licensing
-    Stablecoin,              // Pegged to fiat or commodity
-    SecurityToken,           // ERC-1400 regulated security
-    Utility,                 // General utility token
+    FinancialAsset,       // Company stake/ownership
+    GamingAsset,          // In-game rewards, earned points, character skills
+    PhysicalCommodity,    // Gold, silver, oil, agricultural products
+    FractionalRealEstate, // Tokenized property ownership
+    IntellectualProperty, // Music, film, software licensing
+    Stablecoin,           // Pegged to fiat or commodity
+    SecurityToken,        // ERC-1400 regulated security
+    Utility,              // General utility token
 }
 
 // ─── PNP16 Token ──────────────────────────────────────────────────────────────
@@ -94,8 +93,11 @@ impl PNP16Token {
         let contract_address = format!(
             "0x{}",
             &crypto::keccak256(
-                format!("{name}{symbol}{creator}{}", Utc::now().timestamp_nanos_opt().unwrap_or(0))
-                    .as_bytes()
+                format!(
+                    "{name}{symbol}{creator}{}",
+                    Utc::now().timestamp_nanos_opt().unwrap_or(0)
+                )
+                .as_bytes()
             )[..40]
         );
 
@@ -125,10 +127,18 @@ impl PNP16Token {
 
     // ── ERC-20 Interface ─────────────────────────────────────────────────────
 
-    pub fn name(&self) -> &str { &self.name }
-    pub fn symbol(&self) -> &str { &self.symbol }
-    pub fn decimals(&self) -> u8 { self.decimals }
-    pub fn total_supply(&self) -> u128 { self.total_supply }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn symbol(&self) -> &str {
+        &self.symbol
+    }
+    pub fn decimals(&self) -> u8 {
+        self.decimals
+    }
+    pub fn total_supply(&self) -> u128 {
+        self.total_supply
+    }
 
     pub fn balance_of(&self, address: &str) -> u128 {
         *self.balances.get(address).unwrap_or(&0)
@@ -138,25 +148,37 @@ impl PNP16Token {
     pub fn transfer(&mut self, from: &str, to: &str, amount: u128) -> Result<bool, String> {
         let from_balance = self.balance_of(from);
         if from_balance < amount {
-            return Err(format!("ERC20: transfer amount exceeds balance ({} < {})", from_balance, amount));
+            return Err(format!(
+                "ERC20: transfer amount exceeds balance ({} < {})",
+                from_balance, amount
+            ));
         }
 
         *self.balances.entry(from.to_string()).or_insert(0) -= amount;
         *self.balances.entry(to.to_string()).or_insert(0) += amount;
 
-        self.record_tx(TokenTransaction::transfer(from, to, amount, &self.contract_address));
+        self.record_tx(TokenTransaction::transfer(
+            from,
+            to,
+            amount,
+            &self.contract_address,
+        ));
         Ok(true)
     }
 
     /// ERC-20: approve(spender, amount)
     pub fn approve(&mut self, owner: &str, spender: &str, amount: u128) -> Result<bool, String> {
-        self.allowances.insert((owner.to_string(), spender.to_string()), amount);
+        self.allowances
+            .insert((owner.to_string(), spender.to_string()), amount);
         Ok(true)
     }
 
     /// ERC-20: allowance(owner, spender)
     pub fn allowance(&self, owner: &str, spender: &str) -> u128 {
-        *self.allowances.get(&(owner.to_string(), spender.to_string())).unwrap_or(&0)
+        *self
+            .allowances
+            .get(&(owner.to_string(), spender.to_string()))
+            .unwrap_or(&0)
     }
 
     /// ERC-20: transferFrom(from, to, amount) — called by approved spender
@@ -169,7 +191,10 @@ impl PNP16Token {
     ) -> Result<bool, String> {
         let allowed = self.allowance(from, spender);
         if allowed < amount {
-            return Err(format!("ERC20: insufficient allowance ({} < {})", allowed, amount));
+            return Err(format!(
+                "ERC20: insufficient allowance ({} < {})",
+                allowed, amount
+            ));
         }
         let from_balance = self.balance_of(from);
         if from_balance < amount {
@@ -177,12 +202,20 @@ impl PNP16Token {
         }
 
         // Reduce allowance
-        *self.allowances.entry((from.to_string(), spender.to_string())).or_insert(0) -= amount;
+        *self
+            .allowances
+            .entry((from.to_string(), spender.to_string()))
+            .or_insert(0) -= amount;
         // Move tokens
         *self.balances.entry(from.to_string()).or_insert(0) -= amount;
         *self.balances.entry(to.to_string()).or_insert(0) += amount;
 
-        self.record_tx(TokenTransaction::transfer(from, to, amount, &self.contract_address));
+        self.record_tx(TokenTransaction::transfer(
+            from,
+            to,
+            amount,
+            &self.contract_address,
+        ));
         Ok(true)
     }
 
@@ -287,11 +320,15 @@ impl ERC1400Token {
     }
 
     pub fn authorize_operator(&mut self, operator: &str, holder: &str) {
-        self.operators.insert((operator.to_string(), holder.to_string()), true);
+        self.operators
+            .insert((operator.to_string(), holder.to_string()), true);
     }
 
     pub fn is_operator(&self, operator: &str, holder: &str) -> bool {
-        *self.operators.get(&(operator.to_string(), holder.to_string())).unwrap_or(&false)
+        *self
+            .operators
+            .get(&(operator.to_string(), holder.to_string()))
+            .unwrap_or(&false)
     }
 }
 
@@ -368,7 +405,9 @@ pub struct TokenRegistry {
 }
 
 impl TokenRegistry {
-    pub fn new() -> Self { Self::default() }
+    pub fn new() -> Self {
+        Self::default()
+    }
 
     pub fn deploy_pnp16(&mut self, token: PNP16Token) -> String {
         let addr = token.contract_address.clone();
@@ -399,14 +438,18 @@ impl TokenRegistry {
     }
 
     pub fn list_tokens(&self) -> Vec<TokenSummary> {
-        let mut result: Vec<TokenSummary> = self.tokens.values().map(|t| TokenSummary {
-            contract_address: t.contract_address.clone(),
-            name: t.name.clone(),
-            symbol: t.symbol.clone(),
-            standard: TokenStandard::PNP16,
-            total_supply: t.total_supply,
-            decimals: t.decimals,
-        }).collect();
+        let mut result: Vec<TokenSummary> = self
+            .tokens
+            .values()
+            .map(|t| TokenSummary {
+                contract_address: t.contract_address.clone(),
+                name: t.name.clone(),
+                symbol: t.symbol.clone(),
+                standard: TokenStandard::PNP16,
+                total_supply: t.total_supply,
+                decimals: t.decimals,
+            })
+            .collect();
 
         for t in self.security_tokens.values() {
             result.push(TokenSummary {

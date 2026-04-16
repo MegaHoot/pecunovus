@@ -22,9 +22,8 @@
 // "Transfer Cards: unique key that can be scanned to redeem stored tokens."
 
 use crate::crypto;
-use serde::{Deserialize, Serialize};
 use chrono::Utc;
-
+use serde::{Deserialize, Serialize};
 
 // ─── Escrow Status ────────────────────────────────────────────────────────────
 
@@ -146,7 +145,9 @@ impl EscrowContract {
     /// Try to release: checks if release_date has passed and actions completed
     pub fn try_release(&mut self) -> bool {
         let now = Utc::now().timestamp();
-        if self.status != EscrowStatus::Locked { return false; }
+        if self.status != EscrowStatus::Locked {
+            return false;
+        }
 
         // Check Transfer Card expiry first
         if self.is_transfer_card {
@@ -159,7 +160,9 @@ impl EscrowContract {
         }
 
         // Check all required actions completed
-        let all_done = self.required_actions.iter()
+        let all_done = self
+            .required_actions
+            .iter()
             .all(|a| self.completed_actions.contains(a));
 
         if now >= self.release_date && all_done {
@@ -173,7 +176,9 @@ impl EscrowContract {
 
     /// Early release by sender
     pub fn release_early(&mut self) -> bool {
-        if self.status != EscrowStatus::Locked { return false; }
+        if self.status != EscrowStatus::Locked {
+            return false;
+        }
         self.status = EscrowStatus::Released;
         self.released_at = Some(Utc::now().timestamp());
         true
@@ -181,7 +186,9 @@ impl EscrowContract {
 
     /// Cancel by sender (before fulfillment)
     pub fn cancel(&mut self) -> bool {
-        if self.status != EscrowStatus::Locked { return false; }
+        if self.status != EscrowStatus::Locked {
+            return false;
+        }
         self.status = EscrowStatus::Canceled;
         self.canceled_at = Some(Utc::now().timestamp());
         true
@@ -283,7 +290,9 @@ impl TransferCard {
     }
 
     pub fn is_valid(&self) -> bool {
-        if self.is_redeemed { return false; }
+        if self.is_redeemed {
+            return false;
+        }
         if let Some(exp) = self.expires_at {
             return Utc::now().timestamp() < exp;
         }
@@ -302,7 +311,9 @@ pub struct MVault {
 }
 
 impl MVault {
-    pub fn new() -> Self { Self::default() }
+    pub fn new() -> Self {
+        Self::default()
+    }
 
     pub fn create_escrow(
         &mut self,
@@ -316,8 +327,14 @@ impl MVault {
         required_actions: Vec<String>,
     ) -> EscrowContract {
         let contract = EscrowContract::new(
-            sender, receiver, amount, release_date,
-            note, private_note, agreement, required_actions,
+            sender,
+            receiver,
+            amount,
+            release_date,
+            note,
+            private_note,
+            agreement,
+            required_actions,
         );
         let result = contract.clone();
         self.escrows.push(contract);
@@ -333,9 +350,11 @@ impl MVault {
     }
 
     pub fn pending_escrows_for(&self, address: &str) -> Vec<&EscrowContract> {
-        self.escrows.iter()
-            .filter(|e| e.status == EscrowStatus::Locked
-                && (e.sender == address || e.receiver == address))
+        self.escrows
+            .iter()
+            .filter(|e| {
+                e.status == EscrowStatus::Locked && (e.sender == address || e.receiver == address)
+            })
             .collect()
     }
 
@@ -358,7 +377,9 @@ impl MVault {
         redemption_key: &str,
         redeemer: &str,
     ) -> Result<u128, String> {
-        let card = self.transfer_cards.iter_mut()
+        let card = self
+            .transfer_cards
+            .iter_mut()
             .find(|c| c.redemption_key == redemption_key)
             .ok_or("Transfer card not found")?;
         card.redeem(redeemer)

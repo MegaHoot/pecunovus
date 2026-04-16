@@ -16,12 +16,12 @@
 // chain/mod.rs
 // Pecu Novus blockchain core: Block, Transaction, Blockchain
 
-use crate::crypto;
 use crate::consensus::VdfProof;
-use serde::{Deserialize, Serialize};
+use crate::crypto;
 use chrono::Utc;
-use std::collections::HashMap;
 use parking_lot::RwLock;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::sync::Arc;
 
 // ─── Transaction Types ────────────────────────────────────────────────────────
@@ -61,7 +61,7 @@ pub struct Transaction {
     pub tx_hash: String,
     pub tx_type: TransactionType,
 
-    pub sender: String,      // EVM address or Pecu address
+    pub sender: String, // EVM address or Pecu address
     pub receiver: String,
     /// Amount in smallest PECU unit (10^-15)
     pub amount: u128,
@@ -80,7 +80,7 @@ pub struct Transaction {
     /// For token transactions
     pub contract_address: Option<String>,
     pub token_id: Option<String>,
-    pub call_data: Option<String>,  // hex-encoded calldata for EVM
+    pub call_data: Option<String>, // hex-encoded calldata for EVM
 
     /// Dual confirmation (whitepaper feature)
     pub sender_confirmed: bool,
@@ -122,8 +122,12 @@ impl Transaction {
             is_escrow
         );
         let tx_hash = crypto::compute_block_address(
-            sender, receiver, &amount.to_string(), timestamp,
-            note.as_deref().unwrap_or(""), is_escrow
+            sender,
+            receiver,
+            &amount.to_string(),
+            timestamp,
+            note.as_deref().unwrap_or(""),
+            is_escrow,
         );
 
         Transaction {
@@ -244,7 +248,11 @@ impl Block {
 
         let hash = header.compute_hash();
 
-        Block { header, hash, transactions }
+        Block {
+            header,
+            hash,
+            transactions,
+        }
     }
 
     pub fn genesis() -> Self {
@@ -415,8 +423,8 @@ impl Blockchain {
                         *burned += tx.burned_amount();
 
                         // Validator gets 50% of gas fee
-                        *balances.entry(block.header.validator.clone()).or_insert(0)
-                            += tx.gas_fee - tx.burned_amount();
+                        *balances.entry(block.header.validator.clone()).or_insert(0) +=
+                            tx.gas_fee - tx.burned_amount();
                     }
                     TransactionType::ValidatorReward => {
                         *balances.entry(tx.receiver.clone()).or_insert(0) += tx.amount;
@@ -473,13 +481,7 @@ impl Blockchain {
     }
 
     /// ERC-20 style: approve spender for contract
-    pub fn approve_erc20(
-        &self,
-        owner: &str,
-        spender: &str,
-        contract: &str,
-        amount: u128,
-    ) {
+    pub fn approve_erc20(&self, owner: &str, spender: &str, contract: &str, amount: u128) {
         let mut allowances = self.allowances.write();
         allowances.insert(
             (owner.to_string(), spender.to_string(), contract.to_string()),
@@ -488,7 +490,9 @@ impl Blockchain {
     }
 
     pub fn get_allowance(&self, owner: &str, spender: &str, contract: &str) -> u128 {
-        *self.allowances.read()
+        *self
+            .allowances
+            .read()
             .get(&(owner.to_string(), spender.to_string(), contract.to_string()))
             .unwrap_or(&0)
     }

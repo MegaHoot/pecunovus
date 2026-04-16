@@ -23,12 +23,11 @@
 // "Validators receive randomized rewards ranging from 0.25 to 1.5 PECU per
 // 24-hour period per hosted node."
 
-pub use crate::crypto::VdfProof;
 use crate::crypto;
-use serde::{Deserialize, Serialize};
+pub use crate::crypto::VdfProof;
 use chrono::Utc;
-use rand::{Rng, thread_rng};
-
+use rand::{thread_rng, Rng};
+use serde::{Deserialize, Serialize};
 
 // ─── Constants (from whitepaper) ─────────────────────────────────────────────
 
@@ -132,17 +131,36 @@ impl HalvingSchedule {
     pub fn official() -> Self {
         HalvingSchedule {
             entries: vec![
-                HalvingEntry { year: 2017, max_annual_reward: 20_000_000_000_000_000_000_000u128 },
-                HalvingEntry { year: 2027, max_annual_reward: 10_000_000_000_000_000_000_000u128 },
-                HalvingEntry { year: 2037, max_annual_reward:  5_000_000_000_000_000_000_000u128 },
-                HalvingEntry { year: 2047, max_annual_reward:  2_500_000_000_000_000_000_000u128 },
-                HalvingEntry { year: 2057, max_annual_reward:  1_250_000_000_000_000_000_000u128 },
+                HalvingEntry {
+                    year: 2017,
+                    max_annual_reward: 20_000_000_000_000_000_000_000u128,
+                },
+                HalvingEntry {
+                    year: 2027,
+                    max_annual_reward: 10_000_000_000_000_000_000_000u128,
+                },
+                HalvingEntry {
+                    year: 2037,
+                    max_annual_reward: 5_000_000_000_000_000_000_000u128,
+                },
+                HalvingEntry {
+                    year: 2047,
+                    max_annual_reward: 2_500_000_000_000_000_000_000u128,
+                },
+                HalvingEntry {
+                    year: 2057,
+                    max_annual_reward: 1_250_000_000_000_000_000_000u128,
+                },
             ],
         }
     }
 
     pub fn current_max_annual_reward(&self) -> u128 {
-        let current_year = Utc::now().format("%Y").to_string().parse::<u32>().unwrap_or(2025);
+        let current_year = Utc::now()
+            .format("%Y")
+            .to_string()
+            .parse::<u32>()
+            .unwrap_or(2025);
         let mut reward = self.entries[0].max_annual_reward;
         for entry in &self.entries {
             if entry.year <= current_year {
@@ -179,7 +197,11 @@ impl ProofOfTime {
 
     pub fn register_validator(&mut self, validator: Validator) {
         // One validator per wallet address (whitepaper policy)
-        if self.validators.iter().any(|v| v.wallet_address == validator.wallet_address) {
+        if self
+            .validators
+            .iter()
+            .any(|v| v.wallet_address == validator.wallet_address)
+        {
             return;
         }
         self.validators.push(validator);
@@ -245,8 +267,12 @@ impl ProofOfTime {
         let block_height = self.pot_sequence;
 
         for v in self.validators.iter_mut() {
-            if !v.is_online { continue; }
-            if self.daily_rewards_issued >= MAX_DAILY_REWARD { break; }
+            if !v.is_online {
+                continue;
+            }
+            if self.daily_rewards_issued >= MAX_DAILY_REWARD {
+                break;
+            }
 
             let mut rng = thread_rng();
             let reward = rng.gen_range(VALIDATOR_REWARD_MIN..=VALIDATOR_REWARD_MAX);
@@ -296,11 +322,26 @@ impl VestingSchedule {
     pub fn official() -> Self {
         VestingSchedule {
             entries: vec![
-                VestingEntry { release_year: 2026, amount_pecu: 40 },
-                VestingEntry { release_year: 2028, amount_pecu: 30 },
-                VestingEntry { release_year: 2030, amount_pecu: 30 },
-                VestingEntry { release_year: 2032, amount_pecu: 20 },
-                VestingEntry { release_year: 2034, amount_pecu: 10 },
+                VestingEntry {
+                    release_year: 2026,
+                    amount_pecu: 40,
+                },
+                VestingEntry {
+                    release_year: 2028,
+                    amount_pecu: 30,
+                },
+                VestingEntry {
+                    release_year: 2030,
+                    amount_pecu: 30,
+                },
+                VestingEntry {
+                    release_year: 2032,
+                    amount_pecu: 20,
+                },
+                VestingEntry {
+                    release_year: 2034,
+                    amount_pecu: 10,
+                },
             ],
         }
     }

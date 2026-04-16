@@ -24,24 +24,18 @@
 // Compatible with MetaMask, Ethers.js, Web3.js via EVM methods.
 
 use crate::chain::{Blockchain, Transaction, TransactionType};
-use crate::tokens::TokenRegistry;
-use crate::escrow::MVault;
 use crate::consensus::ProofOfTime;
-use crate::wallet::Wallet;
 use crate::crypto;
+use crate::escrow::MVault;
+use crate::tokens::TokenRegistry;
+use crate::wallet::Wallet;
 
-use axum::{
-    extract::State,
-    http::StatusCode,
-    response::Json,
-    routing::post,
-    Router,
-};
+use axum::{extract::State, http::StatusCode, response::Json, routing::post, Router};
+use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::sync::Arc;
-use parking_lot::RwLock;
-use tower_http::cors::{CorsLayer, Any};
+use tower_http::cors::{Any, CorsLayer};
 use tracing::{info, warn};
 
 // ─── Shared App State ─────────────────────────────────────────────────────────
@@ -65,7 +59,7 @@ impl AppState {
             mvault: Arc::new(RwLock::new(MVault::new())),
             pot: Arc::new(RwLock::new(ProofOfTime::new())),
             wallets: Arc::new(RwLock::new(std::collections::HashMap::new())),
-            chain_id: 3001,  // Pecu Novus chain ID
+            chain_id: 3001, // Pecu Novus chain ID
             network_name: "Pecu Novus Mainnet".to_string(),
         }
     }
@@ -99,13 +93,21 @@ pub struct RpcError {
 
 impl RpcResponse {
     pub fn ok(id: Option<Value>, result: Value) -> Self {
-        RpcResponse { jsonrpc: "2.0".into(), result: Some(result), error: None, id }
+        RpcResponse {
+            jsonrpc: "2.0".into(),
+            result: Some(result),
+            error: None,
+            id,
+        }
     }
     pub fn err(id: Option<Value>, code: i64, message: &str) -> Self {
         RpcResponse {
             jsonrpc: "2.0".into(),
             result: None,
-            error: Some(RpcError { code, message: message.to_string() }),
+            error: Some(RpcError {
+                code,
+                message: message.to_string(),
+            }),
             id,
         }
     }
@@ -142,8 +144,10 @@ impl RpcServer {
         info!("   EVM Compatible: eth_* methods available");
         info!("   Native: pecu_* | pnp16_* | escrow_* methods available");
 
-        
-        axum::Server::bind(&addr.parse().unwrap()).serve(app.into_make_service()).await.unwrap();
+        axum::Server::bind(&addr.parse().unwrap())
+            .serve(app.into_make_service())
+            .await
+            .unwrap();
     }
 }
 
@@ -160,71 +164,71 @@ async fn handle_rpc(
 
     let response = match req.method.as_str() {
         // ── EVM / Ethereum-compatible methods ─────────────────────────────────
-        "eth_chainId"              => eth_chain_id(&state, id),
-        "net_version"              => net_version(&state, id),
-        "eth_blockNumber"          => eth_block_number(&state, id),
-        "eth_getBalance"           => eth_get_balance(&state, id, &params),
-        "eth_getBlockByNumber"     => eth_get_block_by_number(&state, id, &params),
-        "eth_getBlockByHash"       => eth_get_block_by_hash(&state, id, &params),
+        "eth_chainId" => eth_chain_id(&state, id),
+        "net_version" => net_version(&state, id),
+        "eth_blockNumber" => eth_block_number(&state, id),
+        "eth_getBalance" => eth_get_balance(&state, id, &params),
+        "eth_getBlockByNumber" => eth_get_block_by_number(&state, id, &params),
+        "eth_getBlockByHash" => eth_get_block_by_hash(&state, id, &params),
         "eth_getTransactionByHash" => eth_get_tx_by_hash(&state, id, &params),
-        "eth_sendRawTransaction"   => eth_send_raw_transaction(&state, id, &params),
-        "eth_call"                 => eth_call(&state, id, &params),
-        "eth_gasPrice"             => eth_gas_price(&state, id),
-        "eth_estimateGas"          => eth_estimate_gas(&state, id, &params),
-        "eth_getTransactionCount"  => eth_get_transaction_count(&state, id, &params),
-        "eth_getLogs"              => eth_get_logs(&state, id, &params),
-        "web3_clientVersion"       => web3_client_version(&state, id),
-        "eth_syncing"              => eth_syncing(&state, id),
-        "eth_accounts"             => eth_accounts(&state, id),
+        "eth_sendRawTransaction" => eth_send_raw_transaction(&state, id, &params),
+        "eth_call" => eth_call(&state, id, &params),
+        "eth_gasPrice" => eth_gas_price(&state, id),
+        "eth_estimateGas" => eth_estimate_gas(&state, id, &params),
+        "eth_getTransactionCount" => eth_get_transaction_count(&state, id, &params),
+        "eth_getLogs" => eth_get_logs(&state, id, &params),
+        "web3_clientVersion" => web3_client_version(&state, id),
+        "eth_syncing" => eth_syncing(&state, id),
+        "eth_accounts" => eth_accounts(&state, id),
 
         // ── ERC-20 token calls (via eth_call ABI dispatch) ────────────────────
-        "erc20_balanceOf"          => erc20_balance_of(&state, id, &params),
-        "erc20_transfer"           => erc20_transfer(&state, id, &params),
-        "erc20_approve"            => erc20_approve(&state, id, &params),
-        "erc20_allowance"          => erc20_allowance(&state, id, &params),
-        "erc20_transferFrom"       => erc20_transfer_from(&state, id, &params),
-        "erc20_totalSupply"        => erc20_total_supply(&state, id, &params),
+        "erc20_balanceOf" => erc20_balance_of(&state, id, &params),
+        "erc20_transfer" => erc20_transfer(&state, id, &params),
+        "erc20_approve" => erc20_approve(&state, id, &params),
+        "erc20_allowance" => erc20_allowance(&state, id, &params),
+        "erc20_transferFrom" => erc20_transfer_from(&state, id, &params),
+        "erc20_totalSupply" => erc20_total_supply(&state, id, &params),
 
         // ── Pecu Novus native methods ─────────────────────────────────────────
-        "pecu_getNetworkInfo"      => pecu_get_network_info(&state, id),
-        "pecu_getChainStats"       => pecu_get_chain_stats(&state, id),
-        "pecu_sendTransaction"     => pecu_send_transaction(&state, id, &params),
-        "pecu_getBalance"          => pecu_get_balance(&state, id, &params),
-        "pecu_createWallet"        => pecu_create_wallet(&state, id),
-        "pecu_getWallet"           => pecu_get_wallet(&state, id, &params),
-        "pecu_getValidators"       => pecu_get_validators(&state, id),
-        "pecu_registerValidator"   => pecu_register_validator(&state, id, &params),
-        "pecu_getHalvingSchedule"  => pecu_get_halving_schedule(&state, id),
-        "pecu_getVestingSchedule"  => pecu_get_vesting_schedule(&state, id),
-        "pecu_mineBlock"           => pecu_mine_block(&state, id),
-        "pecu_getTokenomics"       => pecu_get_tokenomics(&state, id),
+        "pecu_getNetworkInfo" => pecu_get_network_info(&state, id),
+        "pecu_getChainStats" => pecu_get_chain_stats(&state, id),
+        "pecu_sendTransaction" => pecu_send_transaction(&state, id, &params),
+        "pecu_getBalance" => pecu_get_balance(&state, id, &params),
+        "pecu_createWallet" => pecu_create_wallet(&state, id),
+        "pecu_getWallet" => pecu_get_wallet(&state, id, &params),
+        "pecu_getValidators" => pecu_get_validators(&state, id),
+        "pecu_registerValidator" => pecu_register_validator(&state, id, &params),
+        "pecu_getHalvingSchedule" => pecu_get_halving_schedule(&state, id),
+        "pecu_getVestingSchedule" => pecu_get_vesting_schedule(&state, id),
+        "pecu_mineBlock" => pecu_mine_block(&state, id),
+        "pecu_getTokenomics" => pecu_get_tokenomics(&state, id),
 
         // ── PNP16 token methods ───────────────────────────────────────────────
-        "pnp16_deployToken"        => pnp16_deploy_token(&state, id, &params),
-        "pnp16_listTokens"         => pnp16_list_tokens(&state, id),
-        "pnp16_getToken"           => pnp16_get_token(&state, id, &params),
-        "pnp16_mint"               => pnp16_mint(&state, id, &params),
-        "pnp16_burn"               => pnp16_burn(&state, id, &params),
-        "pnp16_transfer"           => pnp16_transfer(&state, id, &params),
+        "pnp16_deployToken" => pnp16_deploy_token(&state, id, &params),
+        "pnp16_listTokens" => pnp16_list_tokens(&state, id),
+        "pnp16_getToken" => pnp16_get_token(&state, id, &params),
+        "pnp16_mint" => pnp16_mint(&state, id, &params),
+        "pnp16_burn" => pnp16_burn(&state, id, &params),
+        "pnp16_transfer" => pnp16_transfer(&state, id, &params),
 
         // ── Escrow / MVault methods ───────────────────────────────────────────
-        "escrow_create"            => escrow_create(&state, id, &params),
-        "escrow_release"           => escrow_release(&state, id, &params),
-        "escrow_cancel"            => escrow_cancel(&state, id, &params),
-        "escrow_get"               => escrow_get(&state, id, &params),
-        "escrow_listByAddress"     => escrow_list_by_address(&state, id, &params),
-        "transfercard_create"      => transfer_card_create(&state, id, &params),
-        "transfercard_redeem"      => transfer_card_redeem(&state, id, &params),
+        "escrow_create" => escrow_create(&state, id, &params),
+        "escrow_release" => escrow_release(&state, id, &params),
+        "escrow_cancel" => escrow_cancel(&state, id, &params),
+        "escrow_get" => escrow_get(&state, id, &params),
+        "escrow_listByAddress" => escrow_list_by_address(&state, id, &params),
+        "transfercard_create" => transfer_card_create(&state, id, &params),
+        "transfercard_redeem" => transfer_card_redeem(&state, id, &params),
 
         // ── Cold storage ──────────────────────────────────────────────────────
-        "css_moveToColdStorage"    => css_move_to_cold_storage(&state, id, &params),
-        "css_redeemColdStorage"    => css_redeem_cold_storage(&state, id, &params),
+        "css_moveToColdStorage" => css_move_to_cold_storage(&state, id, &params),
+        "css_redeemColdStorage" => css_redeem_cold_storage(&state, id, &params),
 
         // ── Access Keys ───────────────────────────────────────────────────────
-        "gak_connect"              => gak_connect(&state, id, &params),
-        "gak_disconnect"           => gak_disconnect(&state, id, &params),
-        "dak_register"             => dak_register(&state, id, &params),
-        "dak_verifyKyc"            => dak_verify_kyc(&state, id, &params),
+        "gak_connect" => gak_connect(&state, id, &params),
+        "gak_disconnect" => gak_disconnect(&state, id, &params),
+        "dak_register" => dak_register(&state, id, &params),
+        "dak_verifyKyc" => dak_verify_kyc(&state, id, &params),
 
         method => RpcResponse::err(id, -32601, &format!("Method not found: {method}")),
     };
@@ -356,9 +360,13 @@ fn erc20_balance_of(state: &AppState, id: Option<Value>, params: &Value) -> RpcR
 
 fn erc20_transfer(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let contract = params[0].as_str().unwrap_or("");
-    let from     = params[1].as_str().unwrap_or("");
-    let to       = params[2].as_str().unwrap_or("");
-    let amount   = params[3].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
+    let from = params[1].as_str().unwrap_or("");
+    let to = params[2].as_str().unwrap_or("");
+    let amount = params[3]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
 
     let mut registry = state.token_registry.write();
     match registry.get_token_mut(contract) {
@@ -372,9 +380,13 @@ fn erc20_transfer(state: &AppState, id: Option<Value>, params: &Value) -> RpcRes
 
 fn erc20_approve(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let contract = params[0].as_str().unwrap_or("");
-    let owner    = params[1].as_str().unwrap_or("");
-    let spender  = params[2].as_str().unwrap_or("");
-    let amount   = params[3].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
+    let owner = params[1].as_str().unwrap_or("");
+    let spender = params[2].as_str().unwrap_or("");
+    let amount = params[3]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
 
     let mut registry = state.token_registry.write();
     match registry.get_token_mut(contract) {
@@ -388,8 +400,8 @@ fn erc20_approve(state: &AppState, id: Option<Value>, params: &Value) -> RpcResp
 
 fn erc20_allowance(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let contract = params[0].as_str().unwrap_or("");
-    let owner    = params[1].as_str().unwrap_or("");
-    let spender  = params[2].as_str().unwrap_or("");
+    let owner = params[1].as_str().unwrap_or("");
+    let spender = params[2].as_str().unwrap_or("");
 
     let registry = state.token_registry.read();
     match registry.get_token(contract) {
@@ -400,10 +412,14 @@ fn erc20_allowance(state: &AppState, id: Option<Value>, params: &Value) -> RpcRe
 
 fn erc20_transfer_from(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let contract = params[0].as_str().unwrap_or("");
-    let spender  = params[1].as_str().unwrap_or("");
-    let from     = params[2].as_str().unwrap_or("");
-    let to       = params[3].as_str().unwrap_or("");
-    let amount   = params[4].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
+    let spender = params[1].as_str().unwrap_or("");
+    let from = params[2].as_str().unwrap_or("");
+    let to = params[3].as_str().unwrap_or("");
+    let amount = params[4]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
 
     let mut registry = state.token_registry.write();
     match registry.get_token_mut(contract) {
@@ -427,20 +443,23 @@ fn erc20_total_supply(state: &AppState, id: Option<Value>, params: &Value) -> Rp
 // ─── Pecu Native Methods ─────────────────────────────────────────────────────
 
 fn pecu_get_network_info(state: &AppState, id: Option<Value>) -> RpcResponse {
-    RpcResponse::ok(id, json!({
-        "network": "Pecu Novus Mainnet",
-        "version": "Pecu 3.0 Themis",
-        "chainId": state.chain_id,
-        "consensus": "Hybrid PoT + PoS (BFT)",
-        "tps": "110,000+",
-        "maxSupply": "1,000,000,000 PECU",
-        "carbonNeutral": true,
-        "evmCompatible": true,
-        "protocols": ["PNP16", "ERC-20", "ERC-1400"],
-        "launched": "2017-01-15",
-        "developers": ["L. Velazquez", "A. Bhardwaj"],
-        "maintainer": "MegaHoot Technologies"
-    }))
+    RpcResponse::ok(
+        id,
+        json!({
+            "network": "Pecu Novus Mainnet",
+            "version": "Pecu 3.0 Themis",
+            "chainId": state.chain_id,
+            "consensus": "Hybrid PoT + PoS (BFT)",
+            "tps": "110,000+",
+            "maxSupply": "1,000,000,000 PECU",
+            "carbonNeutral": true,
+            "evmCompatible": true,
+            "protocols": ["PNP16", "ERC-20", "ERC-1400"],
+            "launched": "2017-01-15",
+            "developers": ["L. Velazquez", "A. Bhardwaj"],
+            "maintainer": "MegaHoot Technologies"
+        }),
+    )
 }
 
 fn pecu_get_chain_stats(state: &AppState, id: Option<Value>) -> RpcResponse {
@@ -449,16 +468,27 @@ fn pecu_get_chain_stats(state: &AppState, id: Option<Value>) -> RpcResponse {
 }
 
 fn pecu_send_transaction(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
-    let sender   = params[0].as_str().unwrap_or("");
+    let sender = params[0].as_str().unwrap_or("");
     let receiver = params[1].as_str().unwrap_or("");
-    let amount   = params[2].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
-    let note     = params[3].as_str().map(|s| s.to_string());
-    let nonce    = state.blockchain.get_nonce(sender);
+    let amount = params[2]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
+    let note = params[3].as_str().map(|s| s.to_string());
+    let nonce = state.blockchain.get_nonce(sender);
 
     let tx = Transaction::new(
         TransactionType::Transfer,
-        sender, receiver, amount,
-        note, None, false, None, None, nonce,
+        sender,
+        receiver,
+        amount,
+        note,
+        None,
+        false,
+        None,
+        None,
+        nonce,
     );
     let hash = tx.tx_hash.clone();
 
@@ -472,12 +502,15 @@ fn pecu_get_balance(state: &AppState, id: Option<Value>, params: &Value) -> RpcR
     let address = params[0].as_str().unwrap_or("");
     let balance = state.blockchain.get_balance(address);
     let display = balance as f64 / 1_000_000_000_000_000f64;
-    RpcResponse::ok(id, json!({
-        "address": address,
-        "balance_raw": balance.to_string(),
-        "balance_pecu": format!("{:.15}", display),
-        "unit": "PECU"
-    }))
+    RpcResponse::ok(
+        id,
+        json!({
+            "address": address,
+            "balance_raw": balance.to_string(),
+            "balance_pecu": format!("{:.15}", display),
+            "unit": "PECU"
+        }),
+    )
 }
 
 fn pecu_create_wallet(state: &AppState, id: Option<Value>) -> RpcResponse {
@@ -490,7 +523,10 @@ fn pecu_create_wallet(state: &AppState, id: Option<Value>) -> RpcResponse {
         "createdAt": wallet.created_at,
         "note": "Keep your private key secret. It will not be shown again."
     });
-    state.wallets.write().insert(wallet.keypair.evm_address.clone(), wallet);
+    state
+        .wallets
+        .write()
+        .insert(wallet.keypair.evm_address.clone(), wallet);
     RpcResponse::ok(id, info)
 }
 
@@ -498,38 +534,51 @@ fn pecu_get_wallet(state: &AppState, id: Option<Value>, params: &Value) -> RpcRe
     let address = params[0].as_str().unwrap_or("");
     let wallets = state.wallets.read();
     match wallets.get(address) {
-        Some(w) => RpcResponse::ok(id, json!({
-            "walletId": w.wallet_id,
-            "evmAddress": w.keypair.evm_address,
-            "pecuAddress": w.keypair.pecu_address,
-            "balance": w.pecu_balance.to_string(),
-            "validatorNodeId": w.validator_node_id,
-            "coldStorageKeys": w.cold_storage.len()
-        })),
+        Some(w) => RpcResponse::ok(
+            id,
+            json!({
+                "walletId": w.wallet_id,
+                "evmAddress": w.keypair.evm_address,
+                "pecuAddress": w.keypair.pecu_address,
+                "balance": w.pecu_balance.to_string(),
+                "validatorNodeId": w.validator_node_id,
+                "coldStorageKeys": w.cold_storage.len()
+            }),
+        ),
         None => RpcResponse::err(id, -32602, "Wallet not found"),
     }
 }
 
 fn pecu_get_validators(state: &AppState, id: Option<Value>) -> RpcResponse {
     let pot = state.pot.read();
-    let validators: Vec<Value> = pot.validators.iter().map(|v| json!({
-        "nodeId": v.node_id,
-        "walletAddress": v.wallet_address,
-        "stake": v.stake.to_string(),
-        "uptimeSeconds": v.uptime_seconds,
-        "blocksValidated": v.blocks_validated,
-        "isOnline": v.is_online,
-        "isLead": v.is_lead,
-        "totalRewardsEarned": v.total_rewards_earned.to_string(),
-        "selectionWeight": v.selection_weight()
-    })).collect();
+    let validators: Vec<Value> = pot
+        .validators
+        .iter()
+        .map(|v| {
+            json!({
+                "nodeId": v.node_id,
+                "walletAddress": v.wallet_address,
+                "stake": v.stake.to_string(),
+                "uptimeSeconds": v.uptime_seconds,
+                "blocksValidated": v.blocks_validated,
+                "isOnline": v.is_online,
+                "isLead": v.is_lead,
+                "totalRewardsEarned": v.total_rewards_earned.to_string(),
+                "selectionWeight": v.selection_weight()
+            })
+        })
+        .collect();
     RpcResponse::ok(id, json!(validators))
 }
 
 fn pecu_register_validator(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     use crate::consensus::Validator;
     let address = params[0].as_str().unwrap_or("");
-    let stake   = params[1].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
+    let stake = params[1]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
 
     let validator = Validator::new(address, stake);
     let node_id = validator.node_id.clone();
@@ -540,35 +589,53 @@ fn pecu_register_validator(state: &AppState, id: Option<Value>, params: &Value) 
         w.validator_node_id = Some(node_id.clone());
     }
 
-    RpcResponse::ok(id, json!({
-        "nodeId": node_id,
-        "walletAddress": address,
-        "stake": stake.to_string(),
-        "status": "registered"
-    }))
+    RpcResponse::ok(
+        id,
+        json!({
+            "nodeId": node_id,
+            "walletAddress": address,
+            "stake": stake.to_string(),
+            "status": "registered"
+        }),
+    )
 }
 
 fn pecu_get_halving_schedule(_state: &AppState, id: Option<Value>) -> RpcResponse {
     use crate::consensus::HalvingSchedule;
     let schedule = HalvingSchedule::official();
-    let entries: Vec<Value> = schedule.entries.iter().map(|e| json!({
-        "year": e.year,
-        "maxAnnualRewardPecu": e.max_annual_reward / 1_000_000_000_000_000u128
-    })).collect();
-    RpcResponse::ok(id, json!({
-        "schedule": entries,
-        "currentMaxAnnual": schedule.current_max_annual_reward() / 1_000_000_000_000_000u128,
-        "note": "Rewards halve every decade. First halving: 2027."
-    }))
+    let entries: Vec<Value> = schedule
+        .entries
+        .iter()
+        .map(|e| {
+            json!({
+                "year": e.year,
+                "maxAnnualRewardPecu": e.max_annual_reward / 1_000_000_000_000_000u128
+            })
+        })
+        .collect();
+    RpcResponse::ok(
+        id,
+        json!({
+            "schedule": entries,
+            "currentMaxAnnual": schedule.current_max_annual_reward() / 1_000_000_000_000_000u128,
+            "note": "Rewards halve every decade. First halving: 2027."
+        }),
+    )
 }
 
 fn pecu_get_vesting_schedule(_state: &AppState, id: Option<Value>) -> RpcResponse {
     use crate::consensus::VestingSchedule;
     let schedule = VestingSchedule::official();
-    let entries: Vec<Value> = schedule.entries.iter().map(|e| json!({
-        "releaseYear": e.release_year,
-        "amountMillionPecu": e.amount_pecu
-    })).collect();
+    let entries: Vec<Value> = schedule
+        .entries
+        .iter()
+        .map(|e| {
+            json!({
+                "releaseYear": e.release_year,
+                "amountMillionPecu": e.amount_pecu
+            })
+        })
+        .collect();
     RpcResponse::ok(id, json!(entries))
 }
 
@@ -577,7 +644,11 @@ fn pecu_mine_block(state: &AppState, id: Option<Value>) -> RpcResponse {
 
     let txs = state.blockchain.drain_mempool(1000);
     let latest = state.blockchain.latest_block();
-    let seed = format!("{}_{}", latest.hash, chrono::Utc::now().timestamp_nanos_opt().unwrap_or(0));
+    let seed = format!(
+        "{}_{}",
+        latest.hash,
+        chrono::Utc::now().timestamp_nanos_opt().unwrap_or(0)
+    );
 
     let (pot_proof, validator_addr) = state.pot.write().generate_pot_proof(&seed);
 
@@ -587,77 +658,96 @@ fn pecu_mine_block(state: &AppState, id: Option<Value>) -> RpcResponse {
     let tx_count = block.transactions.len();
 
     match state.blockchain.commit_block(block) {
-        Ok(_) => RpcResponse::ok(id, json!({
-            "blockHash": block_hash,
-            "height": height,
-            "txCount": tx_count,
-            "validator": validator_addr,
-            "status": "committed"
-        })),
+        Ok(_) => RpcResponse::ok(
+            id,
+            json!({
+                "blockHash": block_hash,
+                "height": height,
+                "txCount": tx_count,
+                "validator": validator_addr,
+                "status": "committed"
+            }),
+        ),
         Err(e) => RpcResponse::err(id, -32000, &e),
     }
 }
 
 fn pecu_get_tokenomics(_state: &AppState, id: Option<Value>) -> RpcResponse {
-    RpcResponse::ok(id, json!({
-        "maxSupply": "1,000,000,000 PECU",
-        "initialSupply": "200,000,000 PECU",
-        "circulatingSupply": "~301,565,915 PECU (as of 04/2026)",
-        "totalBurned": "~9,372,828 PECU (as of 04/2026)",
-        "gasFeeRate": "0.0025% (flat)",
-        "burnMechanism": "50% of all gas fees burned permanently",
-        "validatorRewardRange": "0.25 - 1.50 PECU per 24h per node",
-        "dailyValidatorCap": "55,000 PECU",
-        "annualValidatorCap": "20,000,000 PECU",
-        "halvingFrequency": "Every 10 years",
-        "nextHalving": "2027",
-        "allocationBreakdown": {
-            "reserveFund": "46%",
-            "founders": "15%",
-            "teamMembers": "12%",
-            "validators": "12%",
-            "institutions": "15%"
-        },
-        "vestingSchedule": [
-            {"year": 2026, "amountMillion": 40},
-            {"year": 2028, "amountMillion": 30},
-            {"year": 2030, "amountMillion": 30},
-            {"year": 2032, "amountMillion": 20},
-            {"year": 2034, "amountMillion": 10}
-        ]
-    }))
+    RpcResponse::ok(
+        id,
+        json!({
+            "maxSupply": "1,000,000,000 PECU",
+            "initialSupply": "200,000,000 PECU",
+            "circulatingSupply": "~301,565,915 PECU (as of 04/2026)",
+            "totalBurned": "~9,372,828 PECU (as of 04/2026)",
+            "gasFeeRate": "0.0025% (flat)",
+            "burnMechanism": "50% of all gas fees burned permanently",
+            "validatorRewardRange": "0.25 - 1.50 PECU per 24h per node",
+            "dailyValidatorCap": "55,000 PECU",
+            "annualValidatorCap": "20,000,000 PECU",
+            "halvingFrequency": "Every 10 years",
+            "nextHalving": "2027",
+            "allocationBreakdown": {
+                "reserveFund": "46%",
+                "founders": "15%",
+                "teamMembers": "12%",
+                "validators": "12%",
+                "institutions": "15%"
+            },
+            "vestingSchedule": [
+                {"year": 2026, "amountMillion": 40},
+                {"year": 2028, "amountMillion": 30},
+                {"year": 2030, "amountMillion": 30},
+                {"year": 2032, "amountMillion": 20},
+                {"year": 2034, "amountMillion": 10}
+            ]
+        }),
+    )
 }
 
 // ─── PNP16 Methods ───────────────────────────────────────────────────────────
 
 fn pnp16_deploy_token(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
-    use crate::tokens::{PNP16Token, AssetClass};
+    use crate::tokens::{AssetClass, PNP16Token};
 
-    let name           = params[0].as_str().unwrap_or("MyToken");
-    let symbol         = params[1].as_str().unwrap_or("MTK");
-    let decimals       = params[2].as_u64().unwrap_or(18) as u8;
-    let initial_supply = params[3].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
-    let creator        = params[4].as_str().unwrap_or("");
-    let dak            = params[5].as_str().unwrap_or("");
+    let name = params[0].as_str().unwrap_or("MyToken");
+    let symbol = params[1].as_str().unwrap_or("MTK");
+    let decimals = params[2].as_u64().unwrap_or(18) as u8;
+    let initial_supply = params[3]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
+    let creator = params[4].as_str().unwrap_or("");
+    let dak = params[5].as_str().unwrap_or("");
 
     let token = PNP16Token::new(
-        name, symbol, decimals, initial_supply, None,
-        AssetClass::Utility, creator, dak,
+        name,
+        symbol,
+        decimals,
+        initial_supply,
+        None,
+        AssetClass::Utility,
+        creator,
+        dak,
     );
     let addr = token.contract_address.clone();
 
     let mut registry = state.token_registry.write();
     registry.deploy_pnp16(token);
 
-    RpcResponse::ok(id, json!({
-        "contractAddress": addr,
-        "name": name,
-        "symbol": symbol,
-        "decimals": decimals,
-        "initialSupply": initial_supply.to_string(),
-        "standard": "PNP16 + ERC-20",
-        "status": "deployed"
-    }))
+    RpcResponse::ok(
+        id,
+        json!({
+            "contractAddress": addr,
+            "name": name,
+            "symbol": symbol,
+            "decimals": decimals,
+            "initialSupply": initial_supply.to_string(),
+            "standard": "PNP16 + ERC-20",
+            "status": "deployed"
+        }),
+    )
 }
 
 fn pnp16_list_tokens(state: &AppState, id: Option<Value>) -> RpcResponse {
@@ -670,30 +760,40 @@ fn pnp16_get_token(state: &AppState, id: Option<Value>, params: &Value) -> RpcRe
     let contract = params[0].as_str().unwrap_or("");
     let registry = state.token_registry.read();
     match registry.get_token(contract) {
-        Some(t) => RpcResponse::ok(id, json!({
-            "contractAddress": t.contract_address,
-            "name": t.name,
-            "symbol": t.symbol,
-            "decimals": t.decimals,
-            "totalSupply": t.total_supply.to_string(),
-            "creator": t.creator,
-            "createdAt": t.created_at,
-            "isPublic": t.is_public,
-            "ledgerCount": t.subset_ledger.len()
-        })),
+        Some(t) => RpcResponse::ok(
+            id,
+            json!({
+                "contractAddress": t.contract_address,
+                "name": t.name,
+                "symbol": t.symbol,
+                "decimals": t.decimals,
+                "totalSupply": t.total_supply.to_string(),
+                "creator": t.creator,
+                "createdAt": t.created_at,
+                "isPublic": t.is_public,
+                "ledgerCount": t.subset_ledger.len()
+            }),
+        ),
         None => RpcResponse::err(id, -32602, "Token not found"),
     }
 }
 
 fn pnp16_mint(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let contract = params[0].as_str().unwrap_or("");
-    let to       = params[1].as_str().unwrap_or("");
-    let amount   = params[2].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
+    let to = params[1].as_str().unwrap_or("");
+    let amount = params[2]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
 
     let mut registry = state.token_registry.write();
     match registry.get_token_mut(contract) {
         Some(t) => match t.mint(to, amount) {
-            Ok(_) => RpcResponse::ok(id, json!({ "success": true, "newSupply": t.total_supply.to_string() })),
+            Ok(_) => RpcResponse::ok(
+                id,
+                json!({ "success": true, "newSupply": t.total_supply.to_string() }),
+            ),
             Err(e) => RpcResponse::err(id, -32000, &e),
         },
         None => RpcResponse::err(id, -32602, "Token not found"),
@@ -702,13 +802,20 @@ fn pnp16_mint(state: &AppState, id: Option<Value>, params: &Value) -> RpcRespons
 
 fn pnp16_burn(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let contract = params[0].as_str().unwrap_or("");
-    let from     = params[1].as_str().unwrap_or("");
-    let amount   = params[2].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
+    let from = params[1].as_str().unwrap_or("");
+    let amount = params[2]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
 
     let mut registry = state.token_registry.write();
     match registry.get_token_mut(contract) {
         Some(t) => match t.burn(from, amount) {
-            Ok(_) => RpcResponse::ok(id, json!({ "success": true, "newSupply": t.total_supply.to_string() })),
+            Ok(_) => RpcResponse::ok(
+                id,
+                json!({ "success": true, "newSupply": t.total_supply.to_string() }),
+            ),
             Err(e) => RpcResponse::err(id, -32000, &e),
         },
         None => RpcResponse::err(id, -32602, "Token not found"),
@@ -722,40 +829,62 @@ fn pnp16_transfer(state: &AppState, id: Option<Value>, params: &Value) -> RpcRes
 // ─── Escrow Methods ───────────────────────────────────────────────────────────
 
 fn escrow_create(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
-    let sender       = params[0].as_str().unwrap_or("");
-    let receiver     = params[1].as_str().unwrap_or("");
-    let amount       = params[2].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
-    let release_date = params[3].as_i64().unwrap_or(chrono::Utc::now().timestamp() + 86400);
-    let note         = params[4].as_str().map(|s| s.to_string());
-    let agreement    = params[5].as_str().map(|s| s.to_string());
+    let sender = params[0].as_str().unwrap_or("");
+    let receiver = params[1].as_str().unwrap_or("");
+    let amount = params[2]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
+    let release_date = params[3]
+        .as_i64()
+        .unwrap_or(chrono::Utc::now().timestamp() + 86400);
+    let note = params[4].as_str().map(|s| s.to_string());
+    let agreement = params[5].as_str().map(|s| s.to_string());
 
     let mut mvault = state.mvault.write();
     let contract = mvault.create_escrow(
-        sender, receiver, amount, release_date,
-        note, None, agreement, vec![],
+        sender,
+        receiver,
+        amount,
+        release_date,
+        note,
+        None,
+        agreement,
+        vec![],
     );
 
-    RpcResponse::ok(id, json!({
-        "escrowId": contract.escrow_id,
-        "escrowKey": contract.escrow_key,
-        "onChainHash": contract.on_chain_hash,
-        "sender": contract.sender,
-        "receiver": contract.receiver,
-        "amount": contract.amount.to_string(),
-        "releaseDate": contract.release_date,
-        "status": "locked"
-    }))
+    RpcResponse::ok(
+        id,
+        json!({
+            "escrowId": contract.escrow_id,
+            "escrowKey": contract.escrow_key,
+            "onChainHash": contract.on_chain_hash,
+            "sender": contract.sender,
+            "receiver": contract.receiver,
+            "amount": contract.amount.to_string(),
+            "releaseDate": contract.release_date,
+            "status": "locked"
+        }),
+    )
 }
 
 fn escrow_release(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let escrow_id = params[0].as_str().unwrap_or("");
-    let early     = params[1].as_bool().unwrap_or(false);
+    let early = params[1].as_bool().unwrap_or(false);
 
     let mut mvault = state.mvault.write();
     match mvault.get_escrow_mut(escrow_id) {
         Some(e) => {
-            let released = if early { e.release_early() } else { e.try_release() };
-            RpcResponse::ok(id, json!({ "released": released, "status": format!("{:?}", e.status) }))
+            let released = if early {
+                e.release_early()
+            } else {
+                e.try_release()
+            };
+            RpcResponse::ok(
+                id,
+                json!({ "released": released, "status": format!("{:?}", e.status) }),
+            )
         }
         None => RpcResponse::err(id, -32602, "Escrow not found"),
     }
@@ -767,7 +896,10 @@ fn escrow_cancel(state: &AppState, id: Option<Value>, params: &Value) -> RpcResp
     match mvault.get_escrow_mut(escrow_id) {
         Some(e) => {
             let canceled = e.cancel();
-            RpcResponse::ok(id, json!({ "canceled": canceled, "status": format!("{:?}", e.status) }))
+            RpcResponse::ok(
+                id,
+                json!({ "canceled": canceled, "status": format!("{:?}", e.status) }),
+            )
         }
         None => RpcResponse::err(id, -32602, "Escrow not found"),
     }
@@ -785,7 +917,8 @@ fn escrow_get(state: &AppState, id: Option<Value>, params: &Value) -> RpcRespons
 fn escrow_list_by_address(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let address = params[0].as_str().unwrap_or("");
     let mvault = state.mvault.read();
-    let escrows: Vec<Value> = mvault.pending_escrows_for(address)
+    let escrows: Vec<Value> = mvault
+        .pending_escrows_for(address)
         .iter()
         .map(|e| serde_json::to_value(e).unwrap_or(json!({})))
         .collect();
@@ -795,38 +928,48 @@ fn escrow_list_by_address(state: &AppState, id: Option<Value>, params: &Value) -
 fn transfer_card_create(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     use crate::escrow::TransferCardUseCase;
 
-    let issuer       = params[0].as_str().unwrap_or("");
-    let amount       = params[1].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
-    let token        = params[2].as_str().map(|s| s.to_string());
-    let expires_at   = params[3].as_i64();
+    let issuer = params[0].as_str().unwrap_or("");
+    let amount = params[1]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
+    let token = params[2].as_str().map(|s| s.to_string());
+    let expires_at = params[3].as_i64();
     let use_case_str = params[4].as_str().unwrap_or("Custom");
     let use_case = match use_case_str {
-        "EventGiveaway"       => TransferCardUseCase::EventGiveaway,
-        "GiftingDigitalAssets"=> TransferCardUseCase::GiftingDigitalAssets,
-        "TokenLaunch"         => TransferCardUseCase::TokenLaunch,
-        "MarketingCampaign"   => TransferCardUseCase::MarketingCampaign,
+        "EventGiveaway" => TransferCardUseCase::EventGiveaway,
+        "GiftingDigitalAssets" => TransferCardUseCase::GiftingDigitalAssets,
+        "TokenLaunch" => TransferCardUseCase::TokenLaunch,
+        "MarketingCampaign" => TransferCardUseCase::MarketingCampaign,
         other => TransferCardUseCase::Custom(other.to_string()),
     };
 
     let mut mvault = state.mvault.write();
     let card = mvault.create_transfer_card(issuer, amount, token, expires_at, use_case);
 
-    RpcResponse::ok(id, json!({
-        "cardId": card.card_id,
-        "redemptionKey": card.redemption_key,
-        "amount": card.amount.to_string(),
-        "expiresAt": card.expires_at,
-        "isValid": card.is_valid()
-    }))
+    RpcResponse::ok(
+        id,
+        json!({
+            "cardId": card.card_id,
+            "redemptionKey": card.redemption_key,
+            "amount": card.amount.to_string(),
+            "expiresAt": card.expires_at,
+            "isValid": card.is_valid()
+        }),
+    )
 }
 
 fn transfer_card_redeem(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
-    let key      = params[0].as_str().unwrap_or("");
+    let key = params[0].as_str().unwrap_or("");
     let redeemer = params[1].as_str().unwrap_or("");
 
     let mut mvault = state.mvault.write();
     match mvault.redeem_transfer_card(key, redeemer) {
-        Ok(amount) => RpcResponse::ok(id, json!({ "redeemed": true, "amount": amount.to_string() })),
+        Ok(amount) => RpcResponse::ok(
+            id,
+            json!({ "redeemed": true, "amount": amount.to_string() }),
+        ),
         Err(e) => RpcResponse::err(id, -32000, &e),
     }
 }
@@ -835,12 +978,19 @@ fn transfer_card_redeem(state: &AppState, id: Option<Value>, params: &Value) -> 
 
 fn css_move_to_cold_storage(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let address = params[0].as_str().unwrap_or("");
-    let amount  = params[1].as_str().unwrap_or("0").parse::<u128>().unwrap_or(0);
+    let amount = params[1]
+        .as_str()
+        .unwrap_or("0")
+        .parse::<u128>()
+        .unwrap_or(0);
 
     let mut wallets = state.wallets.write();
     match wallets.get_mut(address) {
         Some(w) => match w.move_to_cold_storage(amount) {
-            Some(key) => RpcResponse::ok(id, json!({ "storageKey": key, "amount": amount.to_string() })),
+            Some(key) => RpcResponse::ok(
+                id,
+                json!({ "storageKey": key, "amount": amount.to_string() }),
+            ),
             None => RpcResponse::err(id, -32000, "Insufficient balance"),
         },
         None => RpcResponse::err(id, -32602, "Wallet not found"),
@@ -848,7 +998,7 @@ fn css_move_to_cold_storage(state: &AppState, id: Option<Value>, params: &Value)
 }
 
 fn css_redeem_cold_storage(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
-    let address     = params[0].as_str().unwrap_or("");
+    let address = params[0].as_str().unwrap_or("");
     let storage_key = params[1].as_str().unwrap_or("");
 
     let mut wallets = state.wallets.write();
@@ -865,8 +1015,8 @@ fn css_redeem_cold_storage(state: &AppState, id: Option<Value>, params: &Value) 
 
 fn gak_connect(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let address = params[0].as_str().unwrap_or("");
-    let app_id  = params[1].as_str().unwrap_or("");
-    let ttl     = params[2].as_i64();
+    let app_id = params[1].as_str().unwrap_or("");
+    let ttl = params[2].as_i64();
 
     let mut wallets = state.wallets.write();
     match wallets.get_mut(address) {
@@ -880,7 +1030,7 @@ fn gak_connect(state: &AppState, id: Option<Value>, params: &Value) -> RpcRespon
 
 fn gak_disconnect(state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let address = params[0].as_str().unwrap_or("");
-    let app_id  = params[1].as_str().unwrap_or("");
+    let app_id = params[1].as_str().unwrap_or("");
 
     let mut wallets = state.wallets.write();
     if let Some(w) = wallets.get_mut(address) {
@@ -892,28 +1042,34 @@ fn gak_disconnect(state: &AppState, id: Option<Value>, params: &Value) -> RpcRes
 fn dak_register(_state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     use crate::wallet::DevelopmentAccessKey;
 
-    let name  = params[0].as_str().unwrap_or("Developer");
+    let name = params[0].as_str().unwrap_or("Developer");
     let email = params[1].as_str().unwrap_or("dev@example.com");
 
     let dak = DevelopmentAccessKey::new(name, email);
-    RpcResponse::ok(id, json!({
-        "dakId": dak.dak_id,
-        "developerName": dak.developer_name,
-        "isKycVerified": dak.is_kyc_verified,
-        "isActive": dak.is_active,
-        "note": "KYC verification required to activate DAK"
-    }))
+    RpcResponse::ok(
+        id,
+        json!({
+            "dakId": dak.dak_id,
+            "developerName": dak.developer_name,
+            "isKycVerified": dak.is_kyc_verified,
+            "isActive": dak.is_active,
+            "note": "KYC verification required to activate DAK"
+        }),
+    )
 }
 
 fn dak_verify_kyc(_state: &AppState, id: Option<Value>, params: &Value) -> RpcResponse {
     let dak_id = params[0].as_str().unwrap_or("");
     // In production: would check against KYC provider
-    RpcResponse::ok(id, json!({
-        "dakId": dak_id,
-        "isKycVerified": true,
-        "isActive": true,
-        "note": "DAK activated. Developer can now deploy tokens and dApps."
-    }))
+    RpcResponse::ok(
+        id,
+        json!({
+            "dakId": dak_id,
+            "isKycVerified": true,
+            "isActive": true,
+            "note": "DAK activated. Developer can now deploy tokens and dApps."
+        }),
+    )
 }
 
 // ─── Helper: Convert Block to Ethereum JSON format ────────────────────────────
