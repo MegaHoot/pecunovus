@@ -127,7 +127,7 @@ fn print_banner() {
     println!("  ║          PECU NOVUS BLOCKCHAIN  |  RUST IMPLEMENTATION           ║");
     println!("  ║  Consensus: Hybrid Proof of Time (PoT) + Proof of Stake (PoS)   ║");
     println!("  ║  110,000+ TPS | PNP16 + ERC-20 + ERC-1400 | EVM Compatible      ║");
-    println!("  ║  Pecu 3.0 Themis | Chain ID: 3001 | Carbon Neutral              ║");
+    println!("  ║  Pecu 3.0 Themis | Chain ID: 27272727 | Carbon Neutral              ║");
     println!("  ║  Maintained by MegaHoot Technologies | Est. January 15, 2017    ║");
     println!(
         "  ╚══════════════════════════════════════════════════════════════════╝

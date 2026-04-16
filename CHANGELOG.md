@@ -94,8 +94,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Example clients: `examples/rpc_client.sh` (curl), `examples/rpc_client.js` (Node.js)
 
 ### Technical Notes
-- Chain ID: 3001 (Pecu Novus Mainnet)
-- MetaMask compatible (custom network: RPC `http://localhost:8545`, Chain ID `3001`)
+- Chain ID: 27272727 (Pecu Novus Mainnet)
+- MetaMask compatible (custom network: RPC `http://localhost:8545`, Chain ID `27272727`)
 - Rust edition 2021, minimum Rust version 1.75
 
 ---

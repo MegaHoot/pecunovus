@@ -59,7 +59,7 @@ impl AppState {
             mvault: Arc::new(RwLock::new(MVault::new())),
             pot: Arc::new(RwLock::new(ProofOfTime::new())),
             wallets: Arc::new(RwLock::new(std::collections::HashMap::new())),
-            chain_id: 3001, // Pecu Novus chain ID
+            chain_id: 27272727, // Pecu Novus chain ID
             network_name: "Pecu Novus Mainnet".to_string(),
         }
     }
@@ -140,7 +140,7 @@ impl RpcServer {
 
         let addr = format!("0.0.0.0:{}", self.port);
         info!("🚀 Pecu Novus RPC Server listening on http://{}", addr);
-        info!("   Chain ID: 3001 | Network: Pecu Novus Mainnet");
+        info!("   Chain ID: 27272727 | Network: Pecu Novus Mainnet");
         info!("   EVM Compatible: eth_* methods available");
         info!("   Native: pecu_* | pnp16_* | escrow_* methods available");
 
