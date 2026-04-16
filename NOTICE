@@ -1,0 +1,72 @@
+Pecu Novus Blockchain — Rust Implementation
+Copyright 2017-2026 Pecu Novus Network / MegaHoot Technologies
+
+This product is licensed under the Apache License, Version 2.0.
+You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ORIGINAL AUTHORS
+
+  Network Vision & Architecture:
+    Vince "Vin" Gauss  (2016–present)
+    Sri Ram            (2016–present)
+
+  Technical Whitepaper (2024) / Pecu 2.0 & 3.0 Themis:
+    L. Velazquez
+    A. Bhardwaj
+
+  Network Stewardship (2022–present):
+    MegaHoot Technologies
+    https://megahoot.com
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NETWORK HISTORY
+
+  - January 15, 2017 : Pecu Novus network launched
+  - January  5, 2018 : Original whitepaper published (Gauss & Ram)
+  - March          2022 : Pecu 2.0 "Code Falcon" — complete overhaul
+  - August  27, 2022 : Pecu 2.0 mainnet rolled out
+  - June    15, 2024 : Technical whitepaper updated (Velazquez & Bhardwaj)
+  - October     2025 : Pecu 3.0 Themis Phase 1 (Hybrid PoT+PoS)
+  - April       2026 : Pecu 3.0 Themis Phase 2 (ERC-20 + Golang integration)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+THIRD-PARTY DEPENDENCIES
+
+This software includes the following open-source crates,
+each governed by their own licenses (all Apache-2.0 or MIT compatible):
+
+  sha2         — Apache-2.0 / MIT
+  sha3         — Apache-2.0 / MIT
+  hex          — Apache-2.0 / MIT
+  rand         — Apache-2.0 / MIT
+  hmac         — Apache-2.0 / MIT
+  serde        — Apache-2.0 / MIT
+  serde_json   — Apache-2.0 / MIT
+  tokio        — MIT
+  axum         — MIT
+  tower        — MIT
+  tower-http   — MIT
+  tracing      — MIT
+  chrono       — Apache-2.0 / MIT
+  num-bigint   — Apache-2.0 / MIT
+  sled         — Apache-2.0 / MIT
+  parking_lot  — Apache-2.0 / MIT
+  dashmap      — MIT
+  bs58         — Apache-2.0 / MIT
+
+Full dependency licenses are available via: cargo license
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RESOURCES
+
+  Website:        https://pecunovus.com
+  Block Explorer: https://pecuscan.com
+  MegaHoot:       https://megahoot.com
+  HootDex:        https://hootdex.com
