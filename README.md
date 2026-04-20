@@ -43,6 +43,7 @@ The network operates on a **hybrid Proof of Time (PoT) and Proof of Stake (PoS)*
 | **Chain ID** | 27272727 |
 | **Carbon Status** | Carbon Neutral |
 | **Block Explorer** | [Pecuscan](https://pecuscan.com) |
+| **ChainList.org** | [Pecu Novus on ChainList](https://chainlist.org/chain/27272727) |
 
 ---
 
