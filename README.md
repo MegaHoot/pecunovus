@@ -477,8 +477,8 @@ cd packages/sdk-typescript && npm install && cd ../..
 
 | Document | Authors | Date | Description |
 |---|---|---|---|
-| **[Original Whitepaper](WHITEPAPER_2018.md)** | Vinci Gauss, Sri Ram | January 2018 | Founding vision, network design, escrow system, tokenomics, and technical specifications |
-| **[Technical Whitepaper 2024](WHITEPAPER.md)** | L. Velazquez, A. Bhardwaj | June 2024 | Applied architecture of Pecu 2.0, hybrid PoT/PoS consensus, PNP16 protocol, smart contracts, industry applications |
+| **[Original Whitepaper](/docs/WHITEPAPER_2018.md)** | Vinci Gauss, Sri Ram | January 2018 | Founding vision, network design, escrow system, tokenomics, and technical specifications |
+| **[Technical Whitepaper 2024](/docs/WHITEPAPER_2024.md)** | L. Velazquez, A. Bhardwaj | June 2024 | Applied architecture of Pecu 2.0, hybrid PoT/PoS consensus, PNP16 protocol, smart contracts, industry applications |
 
 ---
 
